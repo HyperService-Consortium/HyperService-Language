@@ -35,9 +35,12 @@ public class SolidityTypeAnalyzer {
             parser.setBuildParseTree(false);
             System.out.println("tree:" + t.toStringTree(parser));
 
-//            OpIntentVisitor visitor = new OpIntentVisitor();
-//            visitor.visit(t);
-//            System.out.println(visitor.types);
+            SolidityVisitor visitor = new SolidityVisitor();
+            visitor.visit(t);
+            for (Contract c:
+                 visitor.contracts.values()) {
+                System.out.println(c);
+            }
 
         } catch (Exception e) {
             System.err.println("parser exception: " + e);

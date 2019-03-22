@@ -6,8 +6,11 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="Hyper-Service-Language" />
+        <module name="hslang" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="hslang" target="7" />
+    </bytecodeTargetLevel>
   </component>
 </project>
