@@ -75,6 +75,7 @@ class Array extends Type {
 class Field {
     Type type;
     String name;
+    int pos;
 
     @Override
     public boolean equals(Object o) {
@@ -178,7 +179,7 @@ class Contract {
         StringBuffer sb = new StringBuffer("Contract " + name + "{ \n");
         for (Field f : fields
                 ) {
-            sb.append("\t " + f.type.toString() + " " + f.name + "\n");
+            sb.append("\t " + f.type + " " + f.name + "{pos# " + f.pos + "}\n");
         }
         for (Function f : functions
                 ) {
@@ -252,6 +253,7 @@ public class SolidityVisitor extends SolidityBaseVisitor {
             Field f = new Field();
             f.type = findType(vdecl.typeName().getText());
             f.name = vdecl.identifier().getText();
+            f.pos = t.fields.size();
             t.fields.add(f);
         }
 
@@ -267,6 +269,7 @@ public class SolidityVisitor extends SolidityBaseVisitor {
         Field f = new Field();
         f.name = ctx.identifier().getText();
         f.type = t;
+        f.pos = curr.fields.size();
         curr.fields.add(f);
 
         return super.visitStateVariableDeclaration(ctx);
