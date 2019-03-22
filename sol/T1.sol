@@ -3,7 +3,7 @@ pragma solidity ^0.5.1;
 contract TransOther{
     address payable owner;
 
-    struct acct{
+    struct acct {
         string name;
         uint id;
     }

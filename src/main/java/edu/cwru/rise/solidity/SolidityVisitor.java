@@ -155,6 +155,17 @@ class Function {
 
 class Struct extends Type {
     List<Field> fields = new ArrayList<>();
+
+    @Override
+    public String toString() {
+        StringBuffer sb = new StringBuffer(name + "(struct{");
+        for (Field f: fields
+             ) {
+            sb.append(f.type + " " + f.name+",");
+        }
+        sb.append("})");
+        return sb.toString();
+    }
 }
 
 class Contract {
@@ -167,7 +178,7 @@ class Contract {
         StringBuffer sb = new StringBuffer("Contract " + name + "{ \n");
         for (Field f : fields
                 ) {
-            sb.append("\t " + f.type + " " + f.name + "\n");
+            sb.append("\t " + f.type.toString() + " " + f.name + "\n");
         }
         for (Function f : functions
                 ) {
