@@ -1,4 +1,4 @@
-// Generated from HSlang.g4 by ANTLR 4.7.2
+// Generated from /Users/Jian/Downloads/暑期学习/Hyper-Service-Language-master/antlr/HSlang.g4 by ANTLR 4.7
 
 package edu.cwru.rise.hslang.parser;
 
@@ -20,6 +20,26 @@ public interface HSlangListener extends ParseTreeListener {
 	 */
 	void exitSourceFile(HSlangParser.SourceFileContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link HSlangParser#importDecl}.
+	 * @param ctx the parse tree
+	 */
+	void enterImportDecl(HSlangParser.ImportDeclContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link HSlangParser#importDecl}.
+	 * @param ctx the parse tree
+	 */
+	void exitImportDecl(HSlangParser.ImportDeclContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link HSlangParser#importSpec}.
+	 * @param ctx the parse tree
+	 */
+	void enterImportSpec(HSlangParser.ImportSpecContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link HSlangParser#importSpec}.
+	 * @param ctx the parse tree
+	 */
+	void exitImportSpec(HSlangParser.ImportSpecContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link HSlangParser#varSpec}.
 	 * @param ctx the parse tree
 	 */
@@ -29,6 +49,16 @@ public interface HSlangListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitVarSpec(HSlangParser.VarSpecContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link HSlangParser#contractAddr}.
+	 * @param ctx the parse tree
+	 */
+	void enterContractAddr(HSlangParser.ContractAddrContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link HSlangParser#contractAddr}.
+	 * @param ctx the parse tree
+	 */
+	void exitContractAddr(HSlangParser.ContractAddrContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link HSlangParser#type}.
 	 * @param ctx the parse tree
