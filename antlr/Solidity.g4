@@ -270,7 +270,7 @@ functionCallArguments
   | expressionList? ;
 
 functionCall
-  : expression '(' functionCallArguments ')' ;
+  : expression  ;
 
 assemblyBlock
   : '{' assemblyItem* '}' ;

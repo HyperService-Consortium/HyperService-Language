@@ -1,12 +1,19 @@
 package edu.cwru.rise.hslang;
 
-import edu.cwru.rise.hslang.parser.HSlangLexer;
-import edu.cwru.rise.hslang.parser.HSlangParser;
-import org.antlr.v4.runtime.*;
+import org.antlr.v4.runtime.ANTLRInputStream;
+import org.antlr.v4.runtime.BailErrorStrategy;
+import org.antlr.v4.runtime.CharStream;
+import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.DiagnosticErrorListener;
+import org.antlr.v4.runtime.Lexer;
+import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.atn.PredictionMode;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
+
+import edu.cwru.rise.hslang.parser.HSlangLexer;
+import edu.cwru.rise.hslang.parser.HSlangParser;
 
 public class OpIntentParser {
     public static void main(String[] args) {

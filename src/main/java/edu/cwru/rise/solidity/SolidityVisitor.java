@@ -1,117 +1,10 @@
 package edu.cwru.rise.solidity;
 
+import java.util.HashMap;
+
 import edu.cwru.rise.solidity.parser.SolidityBaseVisitor;
 import edu.cwru.rise.solidity.parser.SolidityParser;
 
-import java.util.*;
-
-
-class Type {
-    String name;
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Type type = (Type) o;
-        return Objects.equals(name, type.name);
-    }
-
-    @Override
-    public int hashCode() {
-
-        return Objects.hash(name);
-    }
-
-    @Override
-    public String toString() {
-        return name;
-    }
-}
-
-class Mapping extends Type {
-    Type keytype;
-    Type valuetype;
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
-        Mapping mapping = (Mapping) o;
-        return Objects.equals(keytype, mapping.keytype) &&
-                Objects.equals(valuetype, mapping.valuetype);
-    }
-
-    @Override
-    public int hashCode() {
-
-        return Objects.hash(super.hashCode(), keytype, valuetype);
-    }
-}
-
-class Array extends Type {
-    Type elemType;
-    int length;
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
-        Array array = (Array) o;
-        return length == array.length &&
-                Objects.equals(elemType, array.elemType);
-    }
-
-    @Override
-    public int hashCode() {
-
-        return Objects.hash(super.hashCode(), elemType, length);
-    }
-}
-
-
-class Field {
-    Type type;
-    String name;
-    int pos;
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Field field = (Field) o;
-        return Objects.equals(type, field.type) &&
-                Objects.equals(name, field.name);
-    }
-
-    @Override
-    public int hashCode() {
-
-        return Objects.hash(type, name);
-    }
-}
-
-class Parameter {
-    Type type;
-    String name;
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Parameter parameter = (Parameter) o;
-        return Objects.equals(type, parameter.type) &&
-                Objects.equals(name, parameter.name);
-    }
-
-    @Override
-    public int hashCode() {
-
-        return Objects.hash(type, name);
-    }
-}
 
 enum Modifier {
     EXTERNAL,
@@ -124,78 +17,15 @@ enum Modifier {
     VIEW
 }
 
-class Function {
-    List<Parameter> args = new ArrayList<>();
-    List<Parameter> returns = new ArrayList<>();
-    String name;
-    Set<Modifier> modifiers = new HashSet<>();
-
-    @Override
-    public String toString() {
-        StringBuffer sb = new StringBuffer();
-        for (Modifier m : modifiers
-                ) {
-            sb.append(m + ",");
-        }
-
-        sb.append(" function " + name + "(");
-        for (Parameter p : args
-                ) {
-            sb.append(p.type + " " + p.name + ",");
-        }
-        sb.append(") returns (");
-
-        for (Parameter p : returns
-                ) {
-            sb.append(p.type + " " + p.name + ",");
-        }
-        sb.append(")");
-        return sb.toString();
-    }
-}
-
-class Struct extends Type {
-    List<Field> fields = new ArrayList<>();
-
-    @Override
-    public String toString() {
-        StringBuffer sb = new StringBuffer(name + "(struct{");
-        for (Field f: fields
-             ) {
-            sb.append(f.type + " " + f.name+",");
-        }
-        sb.append("})");
-        return sb.toString();
-    }
-}
-
-class Contract {
-    String name;
-    List<Field> fields = new ArrayList<>();
-    List<Function> functions = new ArrayList<>();
-
-    @Override
-    public String toString() {
-        StringBuffer sb = new StringBuffer("Contract " + name + "{ \n");
-        for (Field f : fields
-                ) {
-            sb.append("\t " + f.type + " " + f.name + "{pos# " + f.pos + "}\n");
-        }
-        for (Function f : functions
-                ) {
-            sb.append("\t " + f.toString() + "\n");
-        }
-        sb.append("}");
-        return sb.toString();
-    }
-}
-
-
 public class SolidityVisitor extends SolidityBaseVisitor {
 
-    HashMap<String, Type> types = new HashMap<>();
-    HashMap<String, Contract> contracts = new HashMap<>();
+    public HashMap<String, Type> types = new HashMap<>();
+    public HashMap<String, Contract> contracts = new HashMap<>();
     Contract curr;
+
+    public Contract getContract(){
+        return curr;
+    }
 
     @Override
     public Object visitContractDefinition(SolidityParser.ContractDefinitionContext ctx) {
@@ -294,6 +124,7 @@ public class SolidityVisitor extends SolidityBaseVisitor {
             }
             f.returns.add(p);
         }
+
 
         if (ctx.modifierList().PublicKeyword().size() > 0) {
             f.modifiers.add(Modifier.PUBLIC);

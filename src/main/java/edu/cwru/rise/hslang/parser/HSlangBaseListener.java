@@ -1,4 +1,4 @@
-// Generated from HSlang.g4 by ANTLR 4.7.2
+// Generated from /Users/Jian/Downloads/暑期学习/Hyper-Service-Language-master/src/HSlang.g4 by ANTLR 4.7
 
 package edu.cwru.rise.hslang.parser;
 
@@ -30,6 +30,30 @@ public class HSlangBaseListener implements HSlangListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterImportDecl(HSlangParser.ImportDeclContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitImportDecl(HSlangParser.ImportDeclContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterImportSpec(HSlangParser.ImportSpecContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitImportSpec(HSlangParser.ImportSpecContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterVarSpec(HSlangParser.VarSpecContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -42,13 +66,37 @@ public class HSlangBaseListener implements HSlangListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterType(HSlangParser.TypeContext ctx) { }
+	@Override public void enterAccountSpc(HSlangParser.AccountSpcContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitType(HSlangParser.TypeContext ctx) { }
+	@Override public void exitAccountSpc(HSlangParser.AccountSpcContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterContractSpc(HSlangParser.ContractSpcContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitContractSpc(HSlangParser.ContractSpcContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterContractAddr(HSlangParser.ContractAddrContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitContractAddr(HSlangParser.ContractAddrContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
