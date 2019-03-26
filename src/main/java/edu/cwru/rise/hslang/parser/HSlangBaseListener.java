@@ -1,4 +1,4 @@
-// Generated from /Users/Jian/Downloads/暑期学习/Hyper-Service-Language-master/antlr/HSlang.g4 by ANTLR 4.7
+// Generated from /Users/Jian/Downloads/暑期学习/Hyper-Service-Language-master/src/HSlang.g4 by ANTLR 4.7
 
 package edu.cwru.rise.hslang.parser;
 
@@ -66,6 +66,30 @@ public class HSlangBaseListener implements HSlangListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterAccountSpc(HSlangParser.AccountSpcContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitAccountSpc(HSlangParser.AccountSpcContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterContractSpc(HSlangParser.ContractSpcContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitContractSpc(HSlangParser.ContractSpcContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterContractAddr(HSlangParser.ContractAddrContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -73,18 +97,6 @@ public class HSlangBaseListener implements HSlangListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitContractAddr(HSlangParser.ContractAddrContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterType(HSlangParser.TypeContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitType(HSlangParser.TypeContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

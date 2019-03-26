@@ -1,4 +1,4 @@
-// Generated from /Users/Jian/Downloads/暑期学习/Hyper-Service-Language-master/antlr/HSlang.g4 by ANTLR 4.7
+// Generated from /Users/Jian/Downloads/暑期学习/Hyper-Service-Language-master/src/HSlang.g4 by ANTLR 4.7
 
 package edu.cwru.rise.hslang.parser;
 
@@ -37,17 +37,23 @@ public interface HSlangVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitVarSpec(HSlangParser.VarSpecContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link HSlangParser#accountSpc}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitAccountSpc(HSlangParser.AccountSpcContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link HSlangParser#contractSpc}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitContractSpc(HSlangParser.ContractSpcContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link HSlangParser#contractAddr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitContractAddr(HSlangParser.ContractAddrContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link HSlangParser#type}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitType(HSlangParser.TypeContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link HSlangParser#opSpec}.
 	 * @param ctx the parse tree

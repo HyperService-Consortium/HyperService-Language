@@ -1,4 +1,4 @@
-// Generated from /Users/Jian/Downloads/暑期学习/Hyper-Service-Language-master/antlr/HSlang.g4 by ANTLR 4.7
+// Generated from /Users/Jian/Downloads/暑期学习/Hyper-Service-Language-master/src/HSlang.g4 by ANTLR 4.7
 
 package edu.cwru.rise.hslang.parser;
 
@@ -47,14 +47,21 @@ public class HSlangBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitContractAddr(HSlangParser.ContractAddrContext ctx) { return visitChildren(ctx); }
+	@Override public T visitAccountSpc(HSlangParser.AccountSpcContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitType(HSlangParser.TypeContext ctx) { return visitChildren(ctx); }
+	@Override public T visitContractSpc(HSlangParser.ContractSpcContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
+	@Override public T visitContractAddr(HSlangParser.ContractAddrContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *

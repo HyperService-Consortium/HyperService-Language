@@ -162,7 +162,7 @@ package edu.cwru.rise.hslang.parser;
 //    : packageClause eos ( importDecl eos )* ( topLevelDecl eos )*
 //    ;
 sourceFile
-    : (importDecl eos )*(varSpec eos) * (opSpec eos) * depSection
+    : (importDecl eos )*(varSpec eos) * (opSpec eos) * (depSection eos)*
     ;
 
 //varSpec
@@ -177,15 +177,20 @@ importSpec
     ;
 
 varSpec
-    : type id=IDENTIFIER '='  chain=IDENTIFIER '::' (address=STRING_LIT | contractAddr)
+    : accountSpc
+    | contractSpc
+    ;
+
+accountSpc
+    : 'account' id=IDENTIFIER '='  chain=IDENTIFIER '::' address=STRING_LIT
+    ;
+
+contractSpc
+    : 'contract' id=IDENTIFIER '='  chain=IDENTIFIER '::' contractAddr
     ;
 
 contractAddr
     : contract=IDENTIFIER '(' address=STRING_LIT ')'
-    ;
-
-type
-    : IDENTIFIER
     ;
 
 opSpec
