@@ -19,7 +19,7 @@ public class SolidityTypeAnalyzer {
     public static void main(String[] args) {
         try {
             // Create a scanner that reads from the input stream passed to us
-            String file = "T1.sol";
+            String file = "sol/T2.sol";
             CharStream charStream = new ANTLRInputStream(new String(Files.readAllBytes(Paths.get(file))));
             Lexer lexer = new SolidityLexer(charStream);
 

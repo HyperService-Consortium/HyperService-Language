@@ -23,7 +23,7 @@ public class SolidityVisitor extends SolidityBaseVisitor {
     public HashMap<String, Contract> contracts = new HashMap<>();
     Contract curr;
 
-    public Contract getContract(){
+    public Contract getContract() {
         return curr;
     }
 
@@ -108,7 +108,11 @@ public class SolidityVisitor extends SolidityBaseVisitor {
     @Override
     public Object visitFunctionDefinition(SolidityParser.FunctionDefinitionContext ctx) {
         Function f = new Function();
-        f.name = ctx.identifier().getText();
+        if (ctx.identifier() != null) {
+            f.name = ctx.identifier().getText();
+        }else{
+            f.name = "_callback_";
+        }
         for (SolidityParser.ParameterContext pc : ctx.parameterList().parameter()) {
             Parameter p = new Parameter();
             p.type = findType(pc.typeName().getText());
@@ -116,13 +120,15 @@ public class SolidityVisitor extends SolidityBaseVisitor {
             f.args.add(p);
         }
 
-        for (SolidityParser.ParameterContext pc : ctx.returnParameters().parameterList().parameter()) {
-            Parameter p = new Parameter();
-            p.type = findType(pc.typeName().getText());
-            if (pc.identifier() != null) {
-                p.name = pc.identifier().getText();
+        if (ctx.returnParameters() != null) {
+            for (SolidityParser.ParameterContext pc : ctx.returnParameters().parameterList().parameter()) {
+                Parameter p = new Parameter();
+                p.type = findType(pc.typeName().getText());
+                if (pc.identifier() != null) {
+                    p.name = pc.identifier().getText();
+                }
+                f.returns.add(p);
             }
-            f.returns.add(p);
         }
 
 
