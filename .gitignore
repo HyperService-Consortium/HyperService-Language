@@ -136,3 +136,7 @@ target/classes/edu/cwru/rise/solidity/parser/SolidityParser$VersionOperatorConte
 target/classes/edu/cwru/rise/solidity/parser/SolidityParser$WhileStatementContext.class
 target/classes/edu/cwru/rise/solidity/parser/SolidityParser.class
 target/classes/edu/cwru/rise/solidity/parser/SolidityVisitor.class
+/.idea/.name
+/.idea/uiDesigner.xml
+/target/classes/edu/cwru/rise/hslang/*.class
+/target/classes/edu/cwru/rise/hslang/parser/*.class

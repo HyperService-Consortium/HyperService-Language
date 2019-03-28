@@ -1,0 +1,15 @@
+// load contracts for type information
+import ("contact1.sol")
+import ("contact2.sol")
+import ("contact3.sol")
+
+account a1 = chain1::"0x692a70d2e424a56d2c6c27aa97d1a86395877b3a" // account address
+account a2 = chain2::"0x692a70d2e424a56d2c6c27aa97d1a86395877b3b"
+contract c1 = chain1::contract1("0x32132") // type with deployed address
+contract c2 = chain2::contract2("0x32132")
+contract c3 = chain2::contract3("0x32132")
+
+op o1 payment 1000 "wei" from a1 to a2
+op o2 call c1.trans("address", 1000) using a1 // now we know the method names and the types of parameters
+op o3 call c2.deposit(c1.field1) using a2 //c1[0] indicates the first state variable of the contract c1
+op o4 call c3.deposit(c1.field2) using a2

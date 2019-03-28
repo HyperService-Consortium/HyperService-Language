@@ -1,11 +1,12 @@
-package edu.cwru.rise.solidity;
+package edu.cwru.rise.hslang;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Contract implements Cloneable {
     public String name;
-
+    public List<Field> fields = new ArrayList<>();
+    public List<Function> functions = new ArrayList<>();
 
     @Override
     public Object clone() {
@@ -17,10 +18,7 @@ public class Contract implements Cloneable {
         }
         return newContra;
     }
-
-
-    List<Field> fields = new ArrayList<>();
-    List<Function> functions = new ArrayList<>();
+    
 
     @Override
     public String toString() {

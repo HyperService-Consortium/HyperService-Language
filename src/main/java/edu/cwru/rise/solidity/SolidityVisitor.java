@@ -2,20 +2,9 @@ package edu.cwru.rise.solidity;
 
 import java.util.HashMap;
 
+import edu.cwru.rise.hslang.*;
 import edu.cwru.rise.solidity.parser.SolidityBaseVisitor;
 import edu.cwru.rise.solidity.parser.SolidityParser;
-
-
-enum Modifier {
-    EXTERNAL,
-    PUBLIC,
-    PRIVATE,
-    INTERNAL,
-    PAYABLE,
-    PURE,
-    CONSTANT,
-    VIEW
-}
 
 public class SolidityVisitor extends SolidityBaseVisitor {
 

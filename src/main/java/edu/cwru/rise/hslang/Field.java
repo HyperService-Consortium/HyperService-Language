@@ -1,18 +1,19 @@
-package edu.cwru.rise.solidity;
+package edu.cwru.rise.hslang;
 
 import java.util.Objects;
 
-public class Parameter {
-    Type type;
-    String name;
+public class Field {
+    public Type type;
+    public String name;
+    public int pos;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Parameter parameter = (Parameter) o;
-        return Objects.equals(type, parameter.type) &&
-                Objects.equals(name, parameter.name);
+        Field field = (Field) o;
+        return Objects.equals(type, field.type) &&
+                Objects.equals(name, field.name);
     }
 
     @Override

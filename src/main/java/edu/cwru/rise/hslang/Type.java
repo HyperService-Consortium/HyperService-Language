@@ -1,9 +1,9 @@
-package edu.cwru.rise.solidity;
+package edu.cwru.rise.hslang;
 
 import java.util.Objects;
 
 public class Type {
-    String name;
+    public String name;
 
     @Override
     public boolean equals(Object o) {

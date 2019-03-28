@@ -6,11 +6,8 @@ import java.util.List;
 
 import edu.cwru.rise.hslang.parser.HSlangBaseVisitor;
 import edu.cwru.rise.hslang.parser.HSlangParser;
-import edu.cwru.rise.solidity.Contract;
-import edu.cwru.rise.solidity.Function;
 import edu.cwru.rise.solidity.SolidityTypeAnalyzer;
 import edu.cwru.rise.solidity.SolidityVisitor;
-import edu.cwru.rise.solidity.Type;
 
 
 public class OpIntentVisitor extends HSlangBaseVisitor<String> {
