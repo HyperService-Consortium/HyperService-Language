@@ -26,7 +26,7 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="hslang" target="7" />
+      <module name="hslang" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>

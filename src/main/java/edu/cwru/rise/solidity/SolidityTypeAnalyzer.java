@@ -1,5 +1,6 @@
 package edu.cwru.rise.solidity;
 
+import edu.cwru.rise.hslang.Contract;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.BailErrorStrategy;
 import org.antlr.v4.runtime.CharStream;
