@@ -1,10 +1,10 @@
-package edu.cwru.rise.solidity;
+package edu.cwru.rise.hslang;
 
 import java.util.Objects;
 
 public class Mapping extends Type {
-    Type keytype;
-    Type valuetype;
+    public Type keytype;
+    public Type valuetype;
 
     @Override
     public boolean equals(Object o) {

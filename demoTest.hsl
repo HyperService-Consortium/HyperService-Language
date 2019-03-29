@@ -1,0 +1,12 @@
+// load contracts for type information
+import ("T1.sol")
+
+account a1 = chain1::"0x692a70d2e424a56d2c6c27aa97d1a86395877b3a" // account address
+account a2 = chain2::"0x692a70d2e424a56d2c6c27aa97d1a86395877b3b"
+contract c1 = chain1::T1("0x32132") // type with deployed address
+
+op o1 payment 1000 "wei" from a1 to a2
+op o2 call c1.trans("address", 1000) using a1 // now we know the method names and the types of parameters
+
+dep:
+o1 before o2

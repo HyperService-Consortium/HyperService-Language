@@ -1,4 +1,4 @@
-package edu.cwru.rise.solidity;
+package edu.cwru.rise.hslang;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -6,10 +6,10 @@ import java.util.List;
 import java.util.Set;
 
 public class Function {
-    List<Parameter> args = new ArrayList<>();
-    List<Parameter> returns = new ArrayList<>();
+    public List<Parameter> args = new ArrayList<>();
+    public List<Parameter> returns = new ArrayList<>();
     public String name;
-    Set<Modifier> modifiers = new HashSet<>();
+    public Set<Modifier> modifiers = new HashSet<>();
 
     @Override
     public String toString() {

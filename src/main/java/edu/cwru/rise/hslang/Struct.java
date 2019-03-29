@@ -1,10 +1,10 @@
-package edu.cwru.rise.solidity;
+package edu.cwru.rise.hslang;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Struct extends Type {
-    List<Field> fields = new ArrayList<>();
+    public List<Field> fields = new ArrayList<>();
 
     @Override
     public String toString() {

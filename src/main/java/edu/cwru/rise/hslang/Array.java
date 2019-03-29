@@ -1,10 +1,10 @@
-package edu.cwru.rise.solidity;
+package edu.cwru.rise.hslang;
 
 import java.util.Objects;
 
 public class Array extends Type {
-    Type elemType;
-    int length;
+    public Type elemType;
+    public int length;
 
     @Override
     public boolean equals(Object o) {

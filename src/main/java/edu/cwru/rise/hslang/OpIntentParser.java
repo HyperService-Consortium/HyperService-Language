@@ -19,7 +19,7 @@ public class OpIntentParser {
     public static void main(String[] args) {
         try {
             // Create a scanner that reads from the input stream passed to us
-            String file = "demo.hsl";
+            String file = "demoTest.hsl";
             CharStream charStream = new ANTLRInputStream(new String(Files.readAllBytes(Paths.get(file))));
             Lexer lexer = new HSlangLexer(charStream);
 
@@ -42,7 +42,12 @@ public class OpIntentParser {
 
             OpIntentVisitor visitor = new OpIntentVisitor();
             visitor.visit(t);
-//            System.out.println(visitor.types);
+            String eol = ",\n";
+            int eolLen = eol.length();
+            String tmp = visitor.output;
+            String out = tmp.substring(0,tmp.length()-eolLen) + "\n]";
+            System.out.println(out);
+            System.out.print(visitor.res);
 
         } catch (Exception e) {
             System.err.println("parser exception: " + e);

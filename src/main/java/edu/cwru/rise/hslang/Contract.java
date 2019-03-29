@@ -1,4 +1,4 @@
-package edu.cwru.rise.solidity;
+package edu.cwru.rise.hslang;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,8 +19,8 @@ public class Contract implements Cloneable {
     }
 
 
-    List<Field> fields = new ArrayList<>();
-    List<Function> functions = new ArrayList<>();
+    public List<Field> fields = new ArrayList<>();
+    public List<Function> functions = new ArrayList<>();
 
     @Override
     public String toString() {
