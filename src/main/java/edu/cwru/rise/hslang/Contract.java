@@ -18,19 +18,6 @@ public class Contract implements Cloneable {
         }
         return newContra;
     }
-<<<<<<< HEAD:src/main/java/edu/cwru/rise/hslang/Contract.java
-
-
-    public List<Field> fields = new ArrayList<>();
-    public List<Function> functions = new ArrayList<>();
-||||||| merged common ancestors:src/main/java/edu/cwru/rise/solidity/Contract.java
-
-
-    List<Field> fields = new ArrayList<>();
-    List<Function> functions = new ArrayList<>();
-=======
-    
->>>>>>> 0cd48c0cde03a51233282f22c0fc631b6eda4f54:src/main/java/edu/cwru/rise/hslang/Contract.java
 
     @Override
     public String toString() {
