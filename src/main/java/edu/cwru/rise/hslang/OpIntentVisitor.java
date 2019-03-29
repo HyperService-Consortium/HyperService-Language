@@ -47,7 +47,7 @@ public class OpIntentVisitor extends HSlangBaseVisitor<String> {
         Contract tmp = defiContracts.get(contractName);
         try{
             if(tmp == null){
-                throw new Exception("the contract" + contractName + "is not defined");
+                throw new HSLParsingException("the contract " + contractName + " is not defined");
             }
         }catch (Exception e) {
             System.err.println("contract exception: " + e);
@@ -68,7 +68,7 @@ public class OpIntentVisitor extends HSlangBaseVisitor<String> {
         }
         try{
             if(flag){
-                throw new Exception("the function" + funcName + "is not defined in the contract");
+                throw new HSLParsingException("the function " + funcName + " is not defined in the contract");
             }
         }catch (Exception e) {
             System.err.println("function exception: " + e);
@@ -85,7 +85,7 @@ public class OpIntentVisitor extends HSlangBaseVisitor<String> {
         List<Inputs> in = new ArrayList<>();
         try{
             if(parameters.size() != args.length){
-                throw new Exception("Invaid inputs");
+                throw new HSLParsingException("Invaid inputs");
             }
         }catch (Exception e) {
             System.err.println("function exception: " + e);
@@ -96,7 +96,7 @@ public class OpIntentVisitor extends HSlangBaseVisitor<String> {
             String requireType = parameters.get(i).type.toString();
             try{
                 if(!requireType.equals(Typecheck(tmpArg))){
-                    throw new Exception("find: " +tmpArg+ "Wrong Input Type, needs: " +requireType );
+                    throw new HSLParsingException("find: " +tmpArg+ "Wrong Input Type, needs: " +requireType );
                 }
             }catch (Exception e) {
                 System.err.println("function exception: " + e);
@@ -138,7 +138,7 @@ public class OpIntentVisitor extends HSlangBaseVisitor<String> {
         String tmp = ctx.contractAddr().contract.getText();
         try{
             if(!impContracts.containsKey(tmp)){  // whether the contract is been import
-                throw new Exception("the contract" + tmp + "is not imported");
+                throw new HSLParsingException("the contract " + tmp + " is not imported");
             }
         }catch (Exception e) {
             System.err.println("contract exception: " + e);
@@ -153,7 +153,7 @@ public class OpIntentVisitor extends HSlangBaseVisitor<String> {
                 defiContracts.put(contractName, newContra);
             }
             else{
-                throw new Exception("the contract's name \"" + contractName + "\" is used");
+                throw new HSLParsingException("the contract's name \"" + contractName + "\" is used");
             }
         }catch (Exception e) {
             System.err.println("contract's name exception: " + e);
@@ -173,10 +173,10 @@ public class OpIntentVisitor extends HSlangBaseVisitor<String> {
         HashMap<String,String> tmp = chainAccount.getOrDefault(chainId,new HashMap<String, String>());
         try {
             if(tmp.get(id)!= null){
-                throw new Exception("the account name is already taken");
+                throw new HSLParsingException("the account name is already taken");
             }
             if(tmp.containsValue(addr)){
-                throw new Exception("the address is already taken");
+                throw new HSLParsingException("the address is already taken");
             }
             tmp.put(id,addr);
             defiVar.put(id,chainId);
