@@ -207,7 +207,7 @@ paymentSpec
     ;
 
 contractInvocationSpec
-    : 'op' opname=IDENTIFIER 'call' recv=IDENTIFIER '.' method=IDENTIFIER '(' argList? ')' ('using' acct=IDENTIFIER )*
+    : 'op' opname=IDENTIFIER 'call' recv=IDENTIFIER '.' method=IDENTIFIER '(' args = argList? ')' ('using' acct=IDENTIFIER )*
     ;
 
 arg
@@ -224,7 +224,8 @@ depSection
     ;
 
 depSpec
-    : left=IDENTIFIER ('before' | 'after') right=identifierList
+    : left=IDENTIFIER dep=IDENTIFIER right=identifierList
+    //: left=IDENTIFIER ('before' | 'after') right=identifierList
     ;
 
 //

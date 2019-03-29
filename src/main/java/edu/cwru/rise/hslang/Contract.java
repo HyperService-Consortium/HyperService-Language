@@ -18,7 +18,6 @@ public class Contract implements Cloneable {
         }
         return newContra;
     }
-    
 
     @Override
     public String toString() {

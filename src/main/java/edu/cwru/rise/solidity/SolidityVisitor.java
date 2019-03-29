@@ -10,6 +10,7 @@ public class SolidityVisitor extends SolidityBaseVisitor {
 
     public HashMap<String, Type> types = new HashMap<>();
     public HashMap<String, Contract> contracts = new HashMap<>();
+    public HashMap<String, Function> functions = new HashMap<>();
     Contract curr;
 
     public Contract getContract() {
@@ -59,6 +60,7 @@ public class SolidityVisitor extends SolidityBaseVisitor {
         } else {
             t = new Type();
             t.name = typename;
+           // types.put(typename,t);
         }
         return t;
     }

@@ -1,4 +1,4 @@
-// Generated from Solidity.g4 by ANTLR 4.7.2
+// Generated from /Users/Jian/Downloads/暑期学习/Hyper-Service-Language-master/src/Solidity.g4 by ANTLR 4.7
 
 package edu.cwru.rise.solidity.parser;
 
@@ -13,7 +13,7 @@ import org.antlr.v4.runtime.misc.*;
 
 @SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast"})
 public class SolidityLexer extends Lexer {
-	static { RuntimeMetaData.checkVersion("4.7.2", RuntimeMetaData.VERSION); }
+	static { RuntimeMetaData.checkVersion("4.7", RuntimeMetaData.VERSION); }
 
 	protected static final DFA[] _decisionToDFA;
 	protected static final PredictionContextCache _sharedContextCache =
