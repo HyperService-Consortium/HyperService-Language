@@ -1,6 +1,5 @@
 package edu.cwru.rise.solidity;
 
-import edu.cwru.rise.hslang.Contract;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.BailErrorStrategy;
 import org.antlr.v4.runtime.CharStream;
@@ -13,16 +12,17 @@ import org.antlr.v4.runtime.atn.PredictionMode;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-import edu.cwru.rise.hslang.*;
+import edu.cwru.rise.hslang.Contract;
 import edu.cwru.rise.solidity.parser.SolidityLexer;
 import edu.cwru.rise.solidity.parser.SolidityParser;
 
 
 public class SolidityTypeAnalyzer {
+    public SolidityVisitor visitor = new SolidityVisitor();
     public static void main(String[] args) {
         try {
             // Create a scanner that reads from the input stream passed to us
-            String file = "sol/T1.sol";
+            String file = "T1.sol";
             CharStream charStream = new ANTLRInputStream(new String(Files.readAllBytes(Paths.get(file))));
             Lexer lexer = new SolidityLexer(charStream);
 
@@ -50,9 +50,7 @@ public class SolidityTypeAnalyzer {
                 System.out.println(c);
             }
 
-           // for(Type c: visitor.types.values()){
-           //     System.out.println(c);
-           // }
+
 
         } catch (Exception e) {
             System.err.println("parser exception: " + e);
@@ -62,7 +60,7 @@ public class SolidityTypeAnalyzer {
     }
 
     public SolidityVisitor sol(String file){
-        SolidityVisitor visitor = new SolidityVisitor();
+        //SolidityVisitor visitor = new SolidityVisitor();
         try {
             CharStream charStream = new ANTLRInputStream(new String(Files.readAllBytes(Paths.get(file))));
             Lexer lexer = new SolidityLexer(charStream);

@@ -7,8 +7,8 @@ public class Inputs {
     public String Type;
     public String Value;
 
-    public Inputs(String Type, String Value){
-        this.Type = Type;
-        this.Value = Value;
+    public Inputs(String type, String value){
+        this.Type = type;
+        this.Value = value;
     }
 }

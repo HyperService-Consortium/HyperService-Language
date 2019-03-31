@@ -6,12 +6,12 @@ import com.google.gson.GsonBuilder;
 /**
  * Created by {Jian Shi} on 2019/3/28.
  */
-public class dependencies {
+public class Dependencies {
     public String left;
     public String right;
     public String dep;
 
-    public dependencies(String left, String right, String dep){
+    public Dependencies(String left, String right, String dep) {
         this.left = left;
         this.right = right;
         this.dep = dep;

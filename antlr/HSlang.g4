@@ -211,7 +211,7 @@ contractInvocationSpec
     ;
 
 arg
-    : STRING_LIT|numericallit|IDENTIFIER| IDENTIFIER '.' IDENTIFIER
+    : numericallit|STRING_LIT|IDENTIFIER| IDENTIFIER '.' IDENTIFIER
     ;
 
 argList

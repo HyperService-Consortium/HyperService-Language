@@ -2,14 +2,29 @@
 
 package edu.cwru.rise.hslang.parser;
 
-import org.antlr.v4.runtime.atn.*;
+import org.antlr.v4.runtime.BufferedTokenStream;
+import org.antlr.v4.runtime.FailedPredicateException;
+import org.antlr.v4.runtime.Lexer;
+import org.antlr.v4.runtime.NoViableAltException;
+import org.antlr.v4.runtime.Parser;
+import org.antlr.v4.runtime.ParserRuleContext;
+import org.antlr.v4.runtime.RecognitionException;
+import org.antlr.v4.runtime.RuleContext;
+import org.antlr.v4.runtime.RuntimeMetaData;
+import org.antlr.v4.runtime.Token;
+import org.antlr.v4.runtime.TokenStream;
+import org.antlr.v4.runtime.Vocabulary;
+import org.antlr.v4.runtime.VocabularyImpl;
+import org.antlr.v4.runtime.atn.ATN;
+import org.antlr.v4.runtime.atn.ATNDeserializer;
+import org.antlr.v4.runtime.atn.ParserATNSimulator;
+import org.antlr.v4.runtime.atn.PredictionContextCache;
 import org.antlr.v4.runtime.dfa.DFA;
-import org.antlr.v4.runtime.*;
-import org.antlr.v4.runtime.misc.*;
-import org.antlr.v4.runtime.tree.*;
+import org.antlr.v4.runtime.tree.ParseTreeListener;
+import org.antlr.v4.runtime.tree.ParseTreeVisitor;
+import org.antlr.v4.runtime.tree.TerminalNode;
+
 import java.util.List;
-import java.util.Iterator;
-import java.util.ArrayList;
 
 @SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast"})
 public class HSlangParser extends Parser {
@@ -943,10 +958,10 @@ public class HSlangParser extends Parser {
 	}
 
 	public static class ArgContext extends ParserRuleContext {
-		public TerminalNode STRING_LIT() { return getToken(HSlangParser.STRING_LIT, 0); }
 		public NumericallitContext numericallit() {
 			return getRuleContext(NumericallitContext.class,0);
 		}
+		public TerminalNode STRING_LIT() { return getToken(HSlangParser.STRING_LIT, 0); }
 		public List<TerminalNode> IDENTIFIER() { return getTokens(HSlangParser.IDENTIFIER); }
 		public TerminalNode IDENTIFIER(int i) {
 			return getToken(HSlangParser.IDENTIFIER, i);
@@ -981,14 +996,14 @@ public class HSlangParser extends Parser {
 				enterOuterAlt(_localctx, 1);
 				{
 				setState(134);
-				match(STRING_LIT);
+				numericallit();
 				}
 				break;
 			case 2:
 				enterOuterAlt(_localctx, 2);
 				{
 				setState(135);
-				numericallit();
+				match(STRING_LIT);
 				}
 				break;
 			case 3:
@@ -1513,8 +1528,8 @@ public class HSlangParser extends Parser {
 		"\2\2|~\7\4\2\2}\177\5\32\16\2~}\3\2\2\2~\177\3\2\2\2\177\u0080\3\2\2\2"+
 		"\u0080\u0085\7\5\2\2\u0081\u0082\7\20\2\2\u0082\u0084\7\24\2\2\u0083\u0081"+
 		"\3\2\2\2\u0084\u0087\3\2\2\2\u0085\u0083\3\2\2\2\u0085\u0086\3\2\2\2\u0086"+
-		"\27\3\2\2\2\u0087\u0085\3\2\2\2\u0088\u008f\7\35\2\2\u0089\u008f\5\22"+
-		"\n\2\u008a\u008f\7\24\2\2\u008b\u008c\7\24\2\2\u008c\u008d\7\17\2\2\u008d"+
+		"\27\3\2\2\2\u0087\u0085\3\2\2\2\u0088\u008f\5\22\n\2\u0089\u008f\7\35"+
+		"\2\2\u008a\u008f\7\24\2\2\u008b\u008c\7\24\2\2\u008c\u008d\7\17\2\2\u008d"+
 		"\u008f\7\24\2\2\u008e\u0088\3\2\2\2\u008e\u0089\3\2\2\2\u008e\u008a\3"+
 		"\2\2\2\u008e\u008b\3\2\2\2\u008f\31\3\2\2\2\u0090\u0095\5\30\r\2\u0091"+
 		"\u0092\7\21\2\2\u0092\u0094\5\30\r\2\u0093\u0091\3\2\2\2\u0094\u0097\3"+

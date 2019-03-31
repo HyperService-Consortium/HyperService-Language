@@ -38,16 +38,22 @@ public class OpIntentParser {
             // start parsing at the compilationUnit rule
             ParserRuleContext t = parser.sourceFile();
             parser.setBuildParseTree(false);
-            System.out.println("tree:" + t.toStringTree(parser));
+            //System.out.println("tree:" + t.toStringTree(parser));
 
             OpIntentVisitor visitor = new OpIntentVisitor();
+
             visitor.visit(t);
+            String dep = visitor.res.toString();
+            if(dep.equals("\"dependencies\":[")){
+                throw new HSLParsingException("Wrong dependencies");
+            }
             String eol = ",\n";
             int eolLen = eol.length();
-            String tmp = visitor.output;
-            String out = tmp.substring(0,tmp.length()-eolLen) + "\n]";
-            System.out.println(out);
-            System.out.print(visitor.res);
+            String tmp = visitor.output.toString();
+            String out = tmp.substring(0,tmp.length()-eolLen);
+            System.out.println(out + "\n]");
+            dep = dep.substring(0, dep.length()-eolLen);
+            System.out.print(dep + "\n]");
 
         } catch (Exception e) {
             System.err.println("parser exception: " + e);

@@ -10,7 +10,6 @@ public class SolidityVisitor extends SolidityBaseVisitor {
 
     public HashMap<String, Type> types = new HashMap<>();
     public HashMap<String, Contract> contracts = new HashMap<>();
-    public HashMap<String, Function> functions = new HashMap<>();
     Contract curr;
 
     public Contract getContract() {
