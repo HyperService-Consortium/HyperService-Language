@@ -29,17 +29,29 @@ public class OpIntentVisitor extends HSlangBaseVisitor<String> {
     public String visitPaymentSpec(HSlangParser.PaymentSpecContext ctx) {
         String opName = ctx.opname.getText();
         opCheck(opName);
-        String src = ctx.fromacct.getText();
-        String src_domain = defiVar.get(src) + " " + src;
-        String dsg = ctx.toacct.getText();
+        try {
+            String src = ctx.fromacct.getText();
+            String dsg = ctx.toacct.getText();
+            if(defiVar.get(src) == null){
+                throw new HSLParsingException("src " + src + " is not defined");
+            }
+            if(defiVar.get(dsg)== null){
+                throw new HSLParsingException("dsg " + dsg + " is not defined");
+            }
+            String src_domain = defiVar.get(src);
 
-        String dst_domain = defiVar.get(dsg) + " " + dsg;
-        String amount = ctx.amt.getText();
-        String unit = ctx.unit.getText().replace("\"","");
-        Payment opPay = new Payment(opName,src_domain,src,dst_domain,dsg,amount,unit);
 
-        output.append(opPay.toJson());
-        output.append(",\n");
+            String dst_domain = defiVar.get(dsg);
+            String amount = ctx.amt.getText();
+            String unit = ctx.unit.getText().replace("\"", "");
+            Payment opPay = new Payment(opName, src_domain, src, dst_domain, dsg, amount, unit);
+
+            output.append(opPay.toJson());
+            output.append(",\n");
+        }catch (Exception e) {
+            System.err.println("Payment exception: " + e);
+            e.printStackTrace();
+        }
         return super.visitPaymentSpec(ctx);
     }
 
@@ -83,7 +95,7 @@ public class OpIntentVisitor extends HSlangBaseVisitor<String> {
         }
         try{
             if(flag){
-                throw new HSLParsingException("the function " + funcName + " is not defined in the contract");
+                throw new HSLParsingException("the function " + funcName + " is not defined in the " + contractName+ " contract");
             }
         }catch (Exception e) {
             System.err.println("function exception: " + e);
@@ -105,6 +117,9 @@ public class OpIntentVisitor extends HSlangBaseVisitor<String> {
                 System.err.println("function exception: " + e);
                 e.printStackTrace();
             }
+            ContractInvocation conIn = new ContractInvocation(name, invoker,contract_domain,contract_addr,contract_code,funcName, in);
+            output.append(conIn.toJson());
+            output.append(",\n");
         }
         else {
             List<Parameter> parameters = res.args;
@@ -126,7 +141,7 @@ public class OpIntentVisitor extends HSlangBaseVisitor<String> {
 
                 try {
                     if (typeRes == null) {
-                        throw new HSLParsingException("Wrong function inputs");
+                        throw new HSLParsingException("Operation " + name + " have wrong function inputs");
                     }
                     if (!requireType.equals(typeRes.get(0))) {
                         throw new HSLParsingException("find: " + tmpArg + ", Wrong Input Type, needs: " + requireType);
@@ -228,19 +243,19 @@ public class OpIntentVisitor extends HSlangBaseVisitor<String> {
         String addr = ctx.address.getText();
         HashMap<String,String> tmp = chainAccount.getOrDefault(chainId,new HashMap<String, String>());
         try {
-            if(tmp.get(id)!= null){
-                throw new HSLParsingException("the account name is already taken");
+            if(defiVar.get(id)!= null){
+                throw new HSLParsingException("the account name " + id  +" is already taken");
             }
             if(tmp.containsValue(addr)){
                 throw new HSLParsingException("the address is already taken");
             }
             tmp.put(id,addr);
             defiVar.put(id,chainId);
+            defiVrAddr.put(id, addr);
         }catch (Exception e) {
             System.err.println(e);
             e.printStackTrace();
         }
-        defiVrAddr.put(id, addr);
         return super.visitAccountSpc(ctx);
     }
 
