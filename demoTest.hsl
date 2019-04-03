@@ -1,12 +1,16 @@
-// load contracts for type information
 import ("T1.sol")
+import ("T2.sol")
 
+// instance address
 account a1 = chain1::"0x692a70d2e424a56d2c6c27aa97d1a86395877b3a" // account address
 account a2 = chain2::"0x692a70d2e424a56d2c6c27aa97d1a86395877b3b"
-contract c1 = chain1::T1("0x32132") // type with deployed address
+contract c1 = chain1::T1("0x32132") // instance with deployed address
+contract c2 = chain1::T2("0x32134") // instance with deployed address
 
-op o1 payment 1000 "wei" from a1 to a2
-op o2 call c1.trans("address", 1000) using a1 // now we know the method names and the types of parameters
+op o1 payment 1000 "wei" from a1 to a2 // mapped to multiple trans intent
+op o2 call c1.trans(c2.owner, 1000) using a1
+op o3 call c2.deposit() using a2
 
 dep:
-o1 before o2
+o1 before o2,o3 // dependency checking
+
