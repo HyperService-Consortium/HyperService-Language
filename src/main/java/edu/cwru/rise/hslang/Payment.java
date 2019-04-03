@@ -9,20 +9,16 @@ import com.google.gson.GsonBuilder;
 public class Payment {
     public String name;
     public String type;
-    public String src_domain;
-    public String src;
-    public String dst_domain;
-    public String dsg;
+    public Sources src;
+    public Sources dst;
     public String amount;
     public String unit;
 
-    public Payment(String name, String src_domain, String src, String dst_domain, String dsg, String amount, String unit){
+    public Payment(String name,Sources src, Sources dst, String amount, String unit){
         this.name = name;
         this.type = "Payment";
-        this.src_domain = src_domain;
         this.src = src;
-        this.dst_domain = dst_domain;
-        this.dsg = dsg;
+        this.dst = dst;
         this.amount= amount;
         this.unit = unit;
     }

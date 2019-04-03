@@ -36,7 +36,7 @@ public class SolidityVisitor extends SolidityBaseVisitor {
             Mapping mapping = new Mapping();
 
             String fromtypename = typename.substring(typename.indexOf("(") + 1, typename.indexOf("=>")).trim();
-            String totypename = typename.substring(typename.indexOf("=>"), typename.indexOf(")")).trim();
+            String totypename = typename.substring(typename.indexOf("=>")+2, typename.lastIndexOf(")")).trim();
 
             Type keytype = findType(fromtypename);
             Type valuetype = findType(totypename);
@@ -51,7 +51,7 @@ public class SolidityVisitor extends SolidityBaseVisitor {
             Array a = new Array();
             Type elemtype = findType(typename.substring(0, typename.indexOf("[")));
             a.elemType = elemtype;
-            String size = typename.substring(typename.indexOf("["), typename.indexOf("]")).trim();
+            String size = typename.substring(typename.indexOf("[")+1, typename.indexOf("]")).trim();
             if (size.length() != 0) {
                 a.length = Integer.parseInt(size);
             }

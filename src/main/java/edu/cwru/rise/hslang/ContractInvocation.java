@@ -13,18 +13,16 @@ public class ContractInvocation {
     public String invoker;
     public String contract_domain;
     public String contract_addr;
-    public String contract_code;
     public String func;
     public List<Inputs> parameters;
 
-    public ContractInvocation(String name, String invoker, String contract_domain, String contract_addr, String contract_code,
+    public ContractInvocation(String name, String invoker, String contract_domain, String contract_addr,
                               String func, List<Inputs> parameters){
         this.name = name;
         this.type = "ContractInvocation";
         this.invoker = invoker;
         this.contract_domain = contract_domain;
         this.contract_addr = contract_addr;
-        this.contract_code = contract_code;
         this.func = func;
         this.parameters = parameters;
     }

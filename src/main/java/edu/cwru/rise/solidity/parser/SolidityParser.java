@@ -1,4 +1,4 @@
-// Generated from /Users/Jian/Downloads/暑期学习/Hyper-Service-Language-master/src/Solidity.g4 by ANTLR 4.7
+// Generated from /Users/Jian/Downloads/Hyper-Service-Language/antlr/Solidity.g4 by ANTLR 4.7
 
 package edu.cwru.rise.solidity.parser;
 

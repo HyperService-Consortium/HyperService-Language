@@ -5,9 +5,9 @@ package edu.cwru.rise.hslang;
  */
 public class Inputs {
     public String Type;
-    public String Value;
+    public Value Value;
 
-    public Inputs(String type, String value){
+    public Inputs(String type, Value value){
         this.Type = type;
         this.Value = value;
     }
