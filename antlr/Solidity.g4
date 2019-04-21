@@ -45,7 +45,7 @@ inheritanceSpecifier
   : userDefinedTypeName ( '(' expression ( ',' expression )* ')' )? ;
 
 contractPart
-  : stateVariableDeclaration
+  : variablesDeclaration
   | usingForDeclaration
   | structDefinition
   | constructorDefinition
@@ -54,9 +54,18 @@ contractPart
   | eventDefinition
   | enumDefinition ;
 
+variablesDeclaration
+    :stateVariableDeclaration
+    |constantVariableDeclaration
+    ;
+
+constantVariableDeclaration
+    :typeName ConstantKeyword (PublicKeyword | InternalKeyword | PrivateKeyword)*
+     identifier ('=' expression)? ';';
+
 stateVariableDeclaration
   : typeName
-    ( PublicKeyword | InternalKeyword | PrivateKeyword | ConstantKeyword )*
+    ( PublicKeyword | InternalKeyword | PrivateKeyword)*
     identifier ('=' expression)? ';' ;
 
 usingForDeclaration
@@ -438,6 +447,7 @@ DoubleQuotedStringCharacter
 fragment
 SingleQuotedStringCharacter
   : ~['\r\n\\] | ('\\' .) ;
+
 WS
   : [ \t\r\n\u000C]+ -> skip ;
 COMMENT

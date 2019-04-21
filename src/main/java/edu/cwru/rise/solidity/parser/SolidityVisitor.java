@@ -85,6 +85,18 @@ public interface SolidityVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitContractPart(SolidityParser.ContractPartContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link SolidityParser#variablesDeclaration}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitVariablesDeclaration(SolidityParser.VariablesDeclarationContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link SolidityParser#constantVariableDeclaration}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitConstantVariableDeclaration(SolidityParser.ConstantVariableDeclarationContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link SolidityParser#stateVariableDeclaration}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

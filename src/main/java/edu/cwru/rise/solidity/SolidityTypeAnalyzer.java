@@ -41,7 +41,7 @@ public class SolidityTypeAnalyzer {
             // start parsing at the compilationUnit rule
             ParserRuleContext t = parser.sourceUnit();
             parser.setBuildParseTree(false);
-            System.out.println("tree:" + t.toStringTree(parser));
+           // System.out.println("tree:" + t.toStringTree(parser));
 
             SolidityVisitor visitor = new SolidityVisitor();
             visitor.visit(t);
@@ -49,8 +49,6 @@ public class SolidityTypeAnalyzer {
                     visitor.contracts.values()) {
                 System.out.println(c);
             }
-
-
 
         } catch (Exception e) {
             System.err.println("parser exception: " + e);

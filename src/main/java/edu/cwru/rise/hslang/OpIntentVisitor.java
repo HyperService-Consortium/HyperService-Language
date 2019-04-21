@@ -11,10 +11,13 @@ import edu.cwru.rise.hslang.parser.HSlangBaseVisitor;
 import edu.cwru.rise.hslang.parser.HSlangParser;
 import edu.cwru.rise.solidity.SolidityTypeAnalyzer;
 import edu.cwru.rise.solidity.SolidityVisitor;
+import edu.cwru.rise.vyper.VPParser;
+import edu.cwru.rise.vyper.VPVistor;
 
 
 public class OpIntentVisitor extends HSlangBaseVisitor<String> {
-    SolidityTypeAnalyzer tmp = new SolidityTypeAnalyzer();
+    SolidityTypeAnalyzer solidityParser = new SolidityTypeAnalyzer();
+    VPParser vyperParser = new VPParser();
     HashMap<String, Contract> contracts = new HashMap<>();
     HashMap<String, Type> contTypes = new HashMap<>();
 
@@ -30,6 +33,7 @@ public class OpIntentVisitor extends HSlangBaseVisitor<String> {
     HashMap<Integer, List<Integer>> adjList = new HashMap<>();
     int[] inDegree = new int[1];
     HashSet<String> visted = new HashSet<>();
+
     @Override
     public String visitPaymentSpec(HSlangParser.PaymentSpecContext ctx) {
         String opName = ctx.opname.getText();
@@ -247,10 +251,17 @@ public class OpIntentVisitor extends HSlangBaseVisitor<String> {
     @Override
     public String visitImportDecl(HSlangParser.ImportDeclContext ctx) {
         String contractName = ctx.importSpec().getText(); //get import contract name
+        //System.out.print(contractName);
         contractName = contractName.replace("\"",""); // remove the " "
-        SolidityVisitor visitor = tmp.sol(contractName); // invoke solidity parse to parse the contract file
-        contracts = visitor.contracts;
-        contTypes = visitor.types;
+        if(contractName.contains(".sol")) {
+            SolidityVisitor visitor = solidityParser.sol(contractName); // invoke solidity parse to parse the contract file
+            contracts = visitor.contracts;
+            contTypes = visitor.types;
+        }else{
+               VPVistor visitor = vyperParser.vy(contractName);
+                contracts = visitor.contracts;
+                contTypes = visitor.types;
+        }
         return super.visitImportDecl(ctx);
     }
 

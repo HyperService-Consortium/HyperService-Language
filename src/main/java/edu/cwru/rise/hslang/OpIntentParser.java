@@ -48,7 +48,7 @@ public class OpIntentParser {
                 throw new HSLParsingException("Wrong dependencies");
             }
             if(visitor.visted.size() != visitor.setNum.size()){
-                throw new HSLParsingException("Wrong dependencies");
+                throw new HSLParsingException("Incomplete dependencies");
             }
             String eol = ",\n";
             int eolLen = eol.length();

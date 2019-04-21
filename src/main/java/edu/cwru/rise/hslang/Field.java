@@ -5,7 +5,7 @@ import java.util.Objects;
 public class Field {
     public Type type;
     public String name;
-    public int pos;
+    public String pos;
 
     @Override
     public boolean equals(Object o) {

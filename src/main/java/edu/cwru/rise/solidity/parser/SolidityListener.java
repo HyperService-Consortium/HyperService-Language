@@ -130,6 +130,26 @@ public interface SolidityListener extends ParseTreeListener {
 	 */
 	void exitContractPart(SolidityParser.ContractPartContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link SolidityParser#variablesDeclaration}.
+	 * @param ctx the parse tree
+	 */
+	void enterVariablesDeclaration(SolidityParser.VariablesDeclarationContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link SolidityParser#variablesDeclaration}.
+	 * @param ctx the parse tree
+	 */
+	void exitVariablesDeclaration(SolidityParser.VariablesDeclarationContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link SolidityParser#constantVariableDeclaration}.
+	 * @param ctx the parse tree
+	 */
+	void enterConstantVariableDeclaration(SolidityParser.ConstantVariableDeclarationContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link SolidityParser#constantVariableDeclaration}.
+	 * @param ctx the parse tree
+	 */
+	void exitConstantVariableDeclaration(SolidityParser.ConstantVariableDeclarationContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link SolidityParser#stateVariableDeclaration}.
 	 * @param ctx the parse tree
 	 */

@@ -1,8 +1,18 @@
 package edu.cwru.rise.solidity;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
-import edu.cwru.rise.hslang.*;
+import edu.cwru.rise.hslang.Array;
+import edu.cwru.rise.hslang.Contract;
+import edu.cwru.rise.hslang.Field;
+import edu.cwru.rise.hslang.Function;
+import edu.cwru.rise.hslang.Mapping;
+import edu.cwru.rise.hslang.Modifier;
+import edu.cwru.rise.hslang.Parameter;
+import edu.cwru.rise.hslang.Struct;
+import edu.cwru.rise.hslang.Type;
 import edu.cwru.rise.solidity.parser.SolidityBaseVisitor;
 import edu.cwru.rise.solidity.parser.SolidityParser;
 
@@ -11,10 +21,11 @@ public class SolidityVisitor extends SolidityBaseVisitor {
     public HashMap<String, Type> types = new HashMap<>();
     public HashMap<String, Contract> contracts = new HashMap<>();
     Contract curr;
-
+    int i = 0;
     public Contract getContract() {
         return curr;
     }
+    HashMap<String, List<Field>> structs = new HashMap<>();
 
     @Override
     public Object visitContractDefinition(SolidityParser.ContractDefinitionContext ctx) {
@@ -30,8 +41,7 @@ public class SolidityVisitor extends SolidityBaseVisitor {
         if (types.containsKey(typename)) {
             return types.get(typename);
         }
-
-        Type t = null;
+        Type t = new Type();
         if (typename.contains("mapping")) {
             Mapping mapping = new Mapping();
 
@@ -47,19 +57,22 @@ public class SolidityVisitor extends SolidityBaseVisitor {
 
             t = mapping;
 
-        } else if (typename.contains("[") && typename.contains("]")) {
-            Array a = new Array();
-            Type elemtype = findType(typename.substring(0, typename.indexOf("[")));
-            a.elemType = elemtype;
-            String size = typename.substring(typename.indexOf("[")+1, typename.indexOf("]")).trim();
-            if (size.length() != 0) {
-                a.length = Integer.parseInt(size);
-            }
-
         } else {
-            t = new Type();
-            t.name = typename;
-           // types.put(typename,t);
+            if (typename.contains("[") && typename.contains("]")) {
+                Array a = new Array();
+                Type elemtype = findType(typename.substring(0, typename.indexOf("[")));
+                a.elemType = elemtype;
+                String size = typename.substring(typename.indexOf("[") + 1, typename.indexOf("]")).trim();
+                if (size.length() != 0) {
+                    a.length = Integer.parseInt(size);
+                }
+                return elemtype;
+
+            } else {
+                //Type t = new Type();
+                t.name = typename;
+                types.put(typename,t);
+            }
         }
         return t;
     }
@@ -68,15 +81,15 @@ public class SolidityVisitor extends SolidityBaseVisitor {
     public Object visitStructDefinition(SolidityParser.StructDefinitionContext ctx) {
         Struct t = new Struct();
         t.name = ctx.identifier().getText();
-
+        List<Field> tmp = new ArrayList<>();
         for (SolidityParser.VariableDeclarationContext vdecl : ctx.variableDeclaration()) {
             Field f = new Field();
             f.type = findType(vdecl.typeName().getText());
             f.name = vdecl.identifier().getText();
-            f.pos = t.fields.size();
-            t.fields.add(f);
+            f.pos = "null";
+            tmp.add(f);
         }
-
+        structs.put(t.name,tmp);
         types.put(t.name, t);
         return super.visitStructDefinition(ctx);
     }
@@ -88,11 +101,43 @@ public class SolidityVisitor extends SolidityBaseVisitor {
         Type t = findType(typename);
         Field f = new Field();
         f.name = ctx.identifier().getText();
+        t.name = typename;
         f.type = t;
-        f.pos = curr.fields.size();
+
+        f.pos = posLocation(typename);
+        //System.out.println("typename: " + typename + " ouput " +f.type);
         curr.fields.add(f);
 
         return super.visitStateVariableDeclaration(ctx);
+    }
+
+    private String posLocation(String typename){
+        String tmp = Integer.toString(i);
+        StringBuffer res = new StringBuffer(tmp);
+        if(typename.contains("[") && typename.contains("]")){
+            String size = typename.substring(typename.indexOf("[") + 1, typename.indexOf("]")).trim();
+            if (size.length() != 0) {
+                if(structs.containsKey(typename)){
+                    int counts = structs.get(typename).size()-1;
+                    i += counts * Integer.parseInt(size);
+                    res.append("-" + i);
+                }
+                else {
+                    i += Integer.parseInt(size);
+                    res.append('-');
+                }
+                i--;
+            }
+        }
+        else{
+            if(structs.containsKey(typename)){
+                i += structs.get(typename).size()-1;
+                res.append("-" + i);
+                i--;
+            }
+        }
+        i++;
+        return res.toString();
     }
 
     @Override
