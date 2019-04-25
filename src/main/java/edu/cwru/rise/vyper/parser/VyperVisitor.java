@@ -109,6 +109,12 @@ public interface VyperVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitStateVariableDeclaration(VyperParser.StateVariableDeclarationContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link VyperParser#custom}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitCustom(VyperParser.CustomContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link VyperParser#type}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -120,12 +126,6 @@ public interface VyperVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitValueType(VyperParser.ValueTypeContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link VyperParser#integerValue}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitIntegerValue(VyperParser.IntegerValueContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link VyperParser#unitType}.
 	 * @param ctx the parse tree
@@ -216,6 +216,18 @@ public interface VyperVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitFunctionArgument(VyperParser.FunctionArgumentContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link VyperParser#typeList}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitTypeList(VyperParser.TypeListContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link VyperParser#parameterList}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitParameterList(VyperParser.ParameterListContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link VyperParser#parameter}.
 	 * @param ctx the parse tree

@@ -12,6 +12,7 @@ import org.antlr.v4.runtime.atn.PredictionMode;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
+import edu.cwru.rise.hslang.Contract;
 import edu.cwru.rise.vyper.parser.VyperLexer;
 import edu.cwru.rise.vyper.parser.VyperParser;
 
@@ -19,10 +20,12 @@ import edu.cwru.rise.vyper.parser.VyperParser;
  * Created by {Jian Shi} on 2019/4/20.
  */
 public class VPParser {
-    public VPVistor vistor = new VPVistor();
+
     public static void main(String[] args) {
         try {
             String file = "test.vy";
+            String[] names = file.split("/|\\.");
+            int size = names.length-2;
             CharStream charStream = new ANTLRInputStream(new String(Files.readAllBytes(Paths.get(file))));
             Lexer lexer = new VyperLexer(charStream);
             CommonTokenStream tokens = new CommonTokenStream(lexer);
@@ -37,6 +40,12 @@ public class VPParser {
             parser.setBuildParseTree(false);
             VPVistor vistor = new VPVistor();
             vistor.visit(t);
+            vistor.curr.name = names[size];
+            vistor.contracts.put(names[size], vistor.curr);
+            for (Contract c:
+                    vistor.contracts.values()) {
+                System.out.println(c);
+            }
 
         }catch (Exception e) {
             System.err.println("parser exception: " + e);
@@ -45,6 +54,7 @@ public class VPParser {
     }
 
     public VPVistor vy(String fileName){
+        VPVistor vistor = new VPVistor();
         try {
             String[] names = fileName.split("/|\\.");
             int size = names.length-2;
@@ -61,7 +71,14 @@ public class VPParser {
             ParserRuleContext t = parser.sourceUnit();
             parser.setBuildParseTree(false);
             vistor.curr.name = names[size];
+            vistor.contracts.put(names[size], vistor.curr);
             vistor.visit(t);
+
+            /*for (Contract c:
+                    vistor.contracts.values()) {
+                System.out.println(c);
+            }
+            */
 
         }catch (Exception e) {
             System.err.println("parser exception: " + e);

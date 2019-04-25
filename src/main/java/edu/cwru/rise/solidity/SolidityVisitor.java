@@ -38,6 +38,11 @@ public class SolidityVisitor extends SolidityBaseVisitor {
     }
 
     Type findType(String typename) {
+        if(typename.equals("int") && !typename.contains("uint")){
+            typename = typename.replaceAll("int", "uint");
+        }
+        //typename = typename.replaceAll("uint", "integer");
+        typename = typename.replaceAll("addresspayable", "address");
         if (types.containsKey(typename)) {
             return types.get(typename);
         }
@@ -94,18 +99,18 @@ public class SolidityVisitor extends SolidityBaseVisitor {
         return super.visitStructDefinition(ctx);
     }
 
+
+
     @Override
     public Object visitStateVariableDeclaration(SolidityParser.StateVariableDeclarationContext ctx) {
         String typename = ctx.typeName().getText();
-
         Type t = findType(typename);
         Field f = new Field();
         f.name = ctx.identifier().getText();
-        t.name = typename;
         f.type = t;
 
         f.pos = posLocation(typename);
-        //System.out.println("typename: " + typename + " ouput " +f.type);
+        //System.out.println("fields: " + f.type + " ouput " +f.name);
         curr.fields.add(f);
 
         return super.visitStateVariableDeclaration(ctx);

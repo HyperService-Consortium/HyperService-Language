@@ -4,17 +4,16 @@ grammar Vyper;
 package edu.cwru.rise.vyper.parser;
 }
 
-
 sourceUnit
-  : (interfaceDefinition |customUnitDeclarations|eventDefinition| structDefinition| stateVariableDeclaration| functionDefinition)* EOF ;
+  : (contractDefinition)* EOF;
 
 contractDefinition
-  : interfaceDefinition *
-  customUnitDeclarations *
-  eventDefinition *
-  structDefinition *
-  stateVariableDeclaration *
-  functionDefinition +
+  : interfaceDefinition
+  |customUnitDeclarations
+  |eventDefinition
+  |structDefinition
+  |stateVariableDeclaration
+  |functionDefinition
   ;
 
 customUnitDeclarations
@@ -72,19 +71,23 @@ contract_Interfaces
   ;
 
 contract_def
-  : 'def' identifier '(' (parameter ('=' expression)?)* ')' ('->' type)? ':' ('constant' | 'modifying')
+  : 'def' identifier '(' (parameter ('=' expression (custom)?)?)* ')' ('->' type)? ':' ('constant' | 'modifying')
   ;
 
 /* sourceUnit:stateVariableDeclaration */
 stateVariableDeclaration
-  : varName = identifier ':' ('public')? ('constant')? '('? varType=type ')'? ('=' expression)?
+  : varName = identifier ':' ('public')? ('constant')? '('? varType=type')'? ('=' expression (custom)? )?
+  ;
+
+custom
+  : '(' identifier (('/' | '*') identifier)* ')'
   ;
 
 type
   : referenceType
-  | valueType
-  | definedType
+  | valueType ('(' identifier (('/' | '*') identifier)* ')')?
   | unitType
+  | definedType
   ;
 
 
@@ -92,25 +95,18 @@ valueType
   : 'bool'
   | 'address'
   | 'bytes32'
-  | integerValue
-  /*
-  | 'bytes[' IntegerNumber ']'
-  | 'string[' IntegerNumber ']'
-  */
+  | 'int128' (customUnitType)*
+  | 'uint256' (customUnitType)*
+  | 'decimal' (customUnitType)*
   ;
 
-integerValue
-  :'int128'
-  | 'uint256'
-  | 'decimal'
-  ;
 
 unitType
-  :  'timestamp' | 'timedelta' | 'wei_value' | customUnitType
+  :  'timestamp' | 'timedelta' | 'wei_value'
   ;
 
 customUnitType
-  : integerValue '(' identifier (('/' | '*') identifier)* ')'
+  : '(' identifier (('/' | '*') identifier)* ')'
   ;
 
 definedType
@@ -151,15 +147,15 @@ eventParameterList
   ;
 
 eventParameter
-  : Identifier ':' (('indexed(' type ')' ) | type)
+  : Identifier ':' (('indexed(' type ')')| type)
   ;
 
 decorator
- : '@'('constant' | 'payable')? ('nonrentant')?
+ : '@' dec = ('constant' | 'payable' | 'nonrentant')?
  ;
 
 decorators
- : '@' ('public' | 'private')  (decorator)*
+ : '@' dec=('public' | 'private')  (decorator)*
  ;
 
 
@@ -169,7 +165,15 @@ functionDefinition
   ;
 
 functionArgument
-  : 'def' funcName = identifier '(' (parameter ('=' expression)?)* ')' ('->' type)? ':' expression*
+  : 'def' funcName = identifier '(' parameterList ')' ('->' typeList)? ':' expression*
+  ;
+
+typeList
+  : type (',' type)?
+  ;
+
+parameterList
+  :( parameter ('=' expression)? )*
   ;
 
 parameter
@@ -269,9 +273,6 @@ SingleQuotedStringCharacter
   : ~['\r\n\\] | ('\\' .) ;
 
 
-Augassign: ('+=' | '-=' | '*=' | '/=' | '%=' | '&=' | '|=' | '^=' |
-            '<<=' | '>>=' | '**=' | '//=');
-
 fragment SPACES
  : [ \t]+
  ;
@@ -281,6 +282,8 @@ identifier
 
 Identifier
   : IdentifierStart IdentifierPart* ;
+
+IndexedKeyword : 'indexed' ;
 
 fragment IdentifierPart
     : IdentifierStart
@@ -700,32 +703,6 @@ DecimalNumber
 // This will need to be enhanced to handle pythonic indentation blocks.
 // good example: https://github.com/antlr/grammars-v4/blob/master/python2/Python2.g4#L376
 
-fragment SHORT_STRING
- : '\'' ( STRING_ESCAPE_SEQ | ~[\\\r\n'] )* '\''
- | '"' ( STRING_ESCAPE_SEQ | ~[\\\r\n"] )* '"'
- ;
-/// longstring      ::=  "'''" longstringitem* "'''" | '"""' longstringitem* '"""'
-fragment LONG_STRING
- : '\'\'\'' LONG_STRING_ITEM*? '\'\'\''
- | '"""' LONG_STRING_ITEM*? '"""'
- ;
-
-/// longstringitem  ::=  longstringchar | stringescapeseq
-fragment LONG_STRING_ITEM
- : LONG_STRING_CHAR
- | STRING_ESCAPE_SEQ
- ;
-
-/// longstringchar  ::=  <any source character except "\">
-fragment LONG_STRING_CHAR
- : ~'\\'
- ;
-
-/// stringescapeseq ::=  "\" <any source character>
-fragment STRING_ESCAPE_SEQ
- : '\\' .
- ;
-
 /// nonzerodigit   ::=  "1"..."9"
 fragment NON_ZERO_DIGIT
  : [1-9]
@@ -835,5 +812,6 @@ fragment LINE_JOINING
 WS
   : ([\t\r\n\u000C] | ' '| '"""' .*? '"""' )+ -> skip
   ;
+
 LINE_COMMENT
   : ('#'| 'return') ~[\r\n]* -> channel(HIDDEN) ;

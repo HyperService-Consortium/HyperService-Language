@@ -170,6 +170,16 @@ public interface VyperListener extends ParseTreeListener {
 	 */
 	void exitStateVariableDeclaration(VyperParser.StateVariableDeclarationContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link VyperParser#custom}.
+	 * @param ctx the parse tree
+	 */
+	void enterCustom(VyperParser.CustomContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link VyperParser#custom}.
+	 * @param ctx the parse tree
+	 */
+	void exitCustom(VyperParser.CustomContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link VyperParser#type}.
 	 * @param ctx the parse tree
 	 */
@@ -189,16 +199,6 @@ public interface VyperListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitValueType(VyperParser.ValueTypeContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link VyperParser#integerValue}.
-	 * @param ctx the parse tree
-	 */
-	void enterIntegerValue(VyperParser.IntegerValueContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link VyperParser#integerValue}.
-	 * @param ctx the parse tree
-	 */
-	void exitIntegerValue(VyperParser.IntegerValueContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link VyperParser#unitType}.
 	 * @param ctx the parse tree
@@ -349,6 +349,26 @@ public interface VyperListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitFunctionArgument(VyperParser.FunctionArgumentContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link VyperParser#typeList}.
+	 * @param ctx the parse tree
+	 */
+	void enterTypeList(VyperParser.TypeListContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link VyperParser#typeList}.
+	 * @param ctx the parse tree
+	 */
+	void exitTypeList(VyperParser.TypeListContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link VyperParser#parameterList}.
+	 * @param ctx the parse tree
+	 */
+	void enterParameterList(VyperParser.ParameterListContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link VyperParser#parameterList}.
+	 * @param ctx the parse tree
+	 */
+	void exitParameterList(VyperParser.ParameterListContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link VyperParser#parameter}.
 	 * @param ctx the parse tree

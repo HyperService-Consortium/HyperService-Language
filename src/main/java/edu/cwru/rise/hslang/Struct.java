@@ -13,6 +13,9 @@ public class Struct extends Type {
              ) {
             sb.append(f.type + " " + f.name+",");
         }
+        if(sb.charAt(sb.length()-1) == ',') {
+            sb.deleteCharAt(sb.length() - 1);
+        }
         sb.append("})");
         return sb.toString();
     }

@@ -1,13 +1,18 @@
 import ("Broker.sol")
 import ("Option.sol")
+import ("test.vy")
 
 account a1 = chain1::"0x7019fa779024c0a0eac1d8475733eefe10a49f3b" // account addr
 account a2 = chain2::"0x47a1cdb6594d6efed3a6b917f2fbaa2bbcf61a2e"
 contract c1 = Chain1::Broker("0xafc7d2959e72081770304f6474151293be1fbba7")  // contract addr
 contract c2 = Chain2::Option("0x3723261b2a5a62b778b5c74318534d7fdf8db38c")  // contract addr
+contract c3 = Chain2::test("0x3723261b2a5a62b778b5c74318d34d7fdhhldb38c")
 
 op o1 call c1.getGenuineValue() using a1 // no parameters
 op o2 call c2.CashSettle(c1.genuineValue) using a2 // use the value of state variable genuineValue of c1 as the parameter
+op o3 call c3.delegate(c2.owner) using a1
+op o4 call c2.updateStake(c3.voterCount) using a2
 
 dep:
-o1 before o2
+o1 before o2,o3
+o3 before o4

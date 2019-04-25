@@ -210,6 +210,18 @@ public class VyperBaseListener implements VyperListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterCustom(VyperParser.CustomContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitCustom(VyperParser.CustomContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterType(VyperParser.TypeContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -229,18 +241,6 @@ public class VyperBaseListener implements VyperListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitValueType(VyperParser.ValueTypeContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterIntegerValue(VyperParser.IntegerValueContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitIntegerValue(VyperParser.IntegerValueContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -421,6 +421,30 @@ public class VyperBaseListener implements VyperListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitFunctionArgument(VyperParser.FunctionArgumentContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterTypeList(VyperParser.TypeListContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitTypeList(VyperParser.TypeListContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterParameterList(VyperParser.ParameterListContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitParameterList(VyperParser.ParameterListContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

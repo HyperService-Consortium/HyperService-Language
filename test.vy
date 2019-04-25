@@ -1,150 +1,155 @@
-Transfer: event({_from: indexed(address), _to: indexed(address), _value: uint256})
-Approval: event({_owner: indexed(address), _spender: indexed(address), _value: uint256})
+# Voting with delegation.
 
-name: public(string[64])
-symbol: public(string[32])
-decimals: public(uint256)
+# Information about voters
+struct Voter:
+    # weight is accumulated by delegation
+    weight: int128
+    # if true, that person already voted (which includes voting by delegating)
+    voted: bool
+    # person delegated to
+    delegate: address
+    # index of the voted proposal, which is not meaningful unless `voted` is True.
+    vote: int128
 
-# NOTE: By declaring `balanceOf` as public, vyper automatically generates a 'balanceOf()' getter
-#       method to allow access to account balances.
-#       The _KeyType will become a required parameter for the getter and it will return _ValueType.
-#       See: https://vyper.readthedocs.io/en/v0.1.0-beta.8/types.html?highlight=getter#mappings
-balanceOf: public(map(address, uint256))
-allowances: map(address, map(address, uint256))
-total_supply: uint256
-minter: address
+# Users can create proposals
+struct Proposal:
+    # short name (up to 32 bytes)
+    name: bytes32
+    # number of accumulated votes
+    voteCount: int128
 
-
-@public
-def __init__(_name: string[64], _symbol: string[32], _decimals: uint256, _supply: uint256):
-    init_supply: uint256 = _supply * 10 ** _decimals
-    self.name = _name
-    self.symbol = _symbol
-    self.decimals = _decimals
-    self.balanceOf[msg.sender] = init_supply
-    self.total_supply = init_supply
-    self.minter = msg.sender
-    log.Transfer(ZERO_ADDRESS, msg.sender, init_supply)
+voters: public(map(address, Voter))
+proposals: public(map(int128, Proposal))
+voterCount: public(int128)
+chairperson: public(address)
+int128Proposals: public(int128)
 
 
 @public
 @constant
-def totalSupply() -> uint256:
-    """
-    @dev Total number of tokens in existence.
-    """
-    return self.total_supply
+def delegated(addr: address) -> bool:
+    return self.voters[addr].delegate != ZERO_ADDRESS
 
 
 @public
 @constant
-def allowance(_owner : address, _spender : address) -> uint256:
-    """
-    @dev Function to check the amount of tokens that an owner allowed to a spender.
-    @param _owner The address which owns the funds.
-    @param _spender The address which will spend the funds.
-    @return An uint256 specifying the amount of tokens still available for the spender.
-    """
-    return self.allowances[_owner][_spender]
+def directlyVoted(addr: address) -> bool:
+    return self.voters[addr].voted and (self.voters[addr].delegate == ZERO_ADDRESS)
 
 
+# Setup global variables
 @public
-def transfer(_to : address, _value : uint256) -> bool:
-    """
-    @dev Transfer token for a specified address
-    @param _to The address to transfer to.
-    @param _value The amount to be transferred.
-    """
-    # NOTE: vyper does not allow unterflows
-    #       so the following subtraction would revert on insufficient balance
-    self.balanceOf[msg.sender] -= _value
-    self.balanceOf[_to] += _value
-    log.Transfer(msg.sender, _to, _value)
-    return True
+def __init__(_proposalNames: bytes32[2]):
+    self.chairperson = msg.sender
+    self.voterCount = 0
+    for i in range(2):
+        self.proposals[i] = Proposal({
+            name: _proposalNames[i],
+            voteCount: 0
+        })
+        self.int128Proposals += 1
 
-
+# Give a `voter` the right to vote on this ballot.
+# This may only be called by the `chairperson`.
 @public
-def transferFrom(_from : address, _to : address, _value : uint256) -> bool:
-    """
-     @dev Transfer tokens from one address to another.
-          Note that while this function emits a Transfer event, this is not required as per the specification,
-          and other compliant implementations may not emit the event.
-     @param _from address The address which you want to send tokens from
-     @param _to address The address which you want to transfer to
-     @param _value uint256 the amount of tokens to be transferred
-    """
-    # NOTE: vyper does not allow unterflows
-    #       so the following subtraction would revert on insufficient balance
-    self.balanceOf[_from] -= _value
-    self.balanceOf[_to] += _value
-    # NOTE: vyper does not allow underflows
-    #      so the following subtraction would revert on insufficient allowance
-    self.allowances[_from][msg.sender] -= _value
-    log.Transfer(_from, _to, _value)
-    return True
+def giveRightToVote(voter: address):
+    # Throws if the sender is not the chairperson.
+    assert msg.sender == self.chairperson
+    # Throws if the voter has already voted.
+    assert not self.voters[voter].voted
+    # Throws if the voter's voting weight isn't 0.
+    assert self.voters[voter].weight == 0
+    self.voters[voter].weight = 1
+    self.voterCount += 1
 
-
+# Used by `delegate` below, and can be called by anyone.
 @public
-def approve(_spender : address, _value : uint256) -> bool:
-    """
-    @dev Approve the passed address to spend the specified amount of tokens on behalf of msg.sender.
-         Beware that changing an allowance with this method brings the risk that someone may use both the old
-         and the new allowance by unfortunate transaction ordering. One possible solution to mitigate this
-         race condition is to first reduce the spender's allowance to 0 and set the desired value afterwards:
-         https://github.com/ethereum/EIPs/issues/20#issuecomment-263524729
-    @param _spender The address which will spend the funds.
-    @param _value The amount of tokens to be spent.
-    """
-    self.allowances[msg.sender][_spender] = _value
-    log.Approval(msg.sender, _spender, _value)
-    return True
+def forwardWeight(delegate_with_weight_to_forward: address):
+    assert self.delegated(delegate_with_weight_to_forward)
+    # Throw if there is nothing to do:
+    assert self.voters[delegate_with_weight_to_forward].weight > 0
 
+    target: address = self.voters[delegate_with_weight_to_forward].delegate
+    for i in range(4):
+        if self.delegated(target):
+            target = self.voters[target].delegate
+            # The following effectively detects cycles of length <= 5,
+            # in which the delegation is given back to the delegator.
+            # This could be done for any int128ber of loops,
+            # or even infinitely with a while loop.
+            # However, cycles aren't actually problematic for correctness;
+            # they just result in spoiled votes.
+            # So, in the production version, this should instead be
+            # the responsibility of the contract's client, and this
+            # check should be removed.
+            assert target != delegate_with_weight_to_forward
+        else:
+            # Weight will be moved to someone who directly voted or
+            # hasn't voted.
+            break
 
+    weight_to_forward: int128 = self.voters[delegate_with_weight_to_forward].weight
+    self.voters[delegate_with_weight_to_forward].weight = 0
+    self.voters[target].weight += weight_to_forward
+
+    if self.directlyVoted(target):
+        self.proposals[self.voters[target].vote].voteCount += weight_to_forward
+        self.voters[target].weight = 0
+
+    # To reiterate: if target is also a delegate, this function will need
+    # to be called again, similarly to as above.
+
+# Delegate your vote to the voter `to`.
 @public
-def mint(_to: address, _value: uint256):
-    """
-    @dev Mint an amount of the token and assigns it to an account.
-         This encapsulates the modification of balances such that the
-         proper events are emitted.
-    @param _to The account that will receive the created tokens.
-    @param _value The amount that will be created.
-    """
-    assert msg.sender == self.minter
-    assert _to != ZERO_ADDRESS
-    self.total_supply += _value
-    self.balanceOf[_to] += _value
-    log.Transfer(ZERO_ADDRESS, _to, _value)
+def delegate(to: address):
+    # Throws if the sender has already voted
+    assert not self.voters[msg.sender].voted
+    # Throws if the sender tries to delegate their vote to themselves or to
+    # the default address value of 0x0000000000000000000000000000000000000000
+    # (the latter might not be problematic, but I don't want to think about it).
+    assert to != msg.sender
+    assert to != ZERO_ADDRESS
 
+    self.voters[msg.sender].voted = True
+    self.voters[msg.sender].delegate = to
 
-@private
-def _burn(_to: address, _value: uint256):
-    """
-    @dev Internal function that burns an amount of the token of a given
-         account.
-    @param _to The account whose tokens will be burned.
-    @param _value The amount that will be burned.
-    """
-    assert _to != ZERO_ADDRESS
-    self.total_supply -= _value
-    self.balanceOf[_to] -= _value
-    log.Transfer(_to, ZERO_ADDRESS, _value)
+    # This call will throw if and only if this delegation would cause a loop
+        # of length <= 5 that ends up delegating back to the delegator.
+    self.forwardWeight(msg.sender)
 
-
+# Give your vote (including votes delegated to you)
+# to proposal `proposals[proposal].name`.
 @public
-def burn(_value: uint256):
-    """
-    @dev Burn an amount of the token of msg.sender.
-    @param _value The amount that will be burned.
-    """
-    self._burn(msg.sender, _value)
+def vote(proposal: int128):
+    # can't vote twice
+    assert not self.voters[msg.sender].voted
+    # can only vote on legitimate proposals
+    assert proposal < self.int128Proposals
 
+    self.voters[msg.sender].vote = proposal
+    self.voters[msg.sender].voted = True
 
+    # transfer msg.sender's weight to proposal
+    self.proposals[proposal].voteCount += self.voters[msg.sender].weight
+    self.voters[msg.sender].weight = 0
+
+# Computes the winning proposal taking all
+# previous votes into account.
 @public
-def burnFrom(_to: address, _value: uint256):
-    """
-    @dev Burn an amount of the token from a given account.
-    @param _to The account whose tokens will be burned.
-    @param _value The amount that will be burned.
-    """
-    self.allowances[_to][msg.sender] -= _value
-    self._burn(_to, _value)
+@constant
+def winningProposal() -> int128:
+    winning_vote_count: int128 = 0
+    winning_proposal: int128 = 0
+    for i in range(2):
+        if self.proposals[i].voteCount > winning_vote_count:
+            winning_vote_count = self.proposals[i].voteCount
+            winning_proposal = i
+    return winning_proposal
+
+# Calls winningProposal() function to get the index
+# of the winner contained in the proposals array and then
+# returns the name of the winner
+@public
+@constant
+def winnerName() -> bytes32:
+    return self.proposals[self.winningProposal()].name

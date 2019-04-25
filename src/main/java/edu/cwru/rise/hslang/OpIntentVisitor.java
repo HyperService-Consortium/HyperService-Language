@@ -255,12 +255,12 @@ public class OpIntentVisitor extends HSlangBaseVisitor<String> {
         contractName = contractName.replace("\"",""); // remove the " "
         if(contractName.contains(".sol")) {
             SolidityVisitor visitor = solidityParser.sol(contractName); // invoke solidity parse to parse the contract file
-            contracts = visitor.contracts;
-            contTypes = visitor.types;
+            contracts.putAll(visitor.contracts);
+            contTypes.putAll(visitor.types);
         }else{
                VPVistor visitor = vyperParser.vy(contractName);
-                contracts = visitor.contracts;
-                contTypes = visitor.types;
+                contracts.putAll(visitor.contracts);
+                contTypes.putAll(visitor.types);
         }
         return super.visitImportDecl(ctx);
     }

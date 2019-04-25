@@ -8,5 +8,6 @@ public enum Modifier {
     PAYABLE,
     PURE,
     CONSTANT,
-    VIEW
+    VIEW,
+    NONRENTANT
 }

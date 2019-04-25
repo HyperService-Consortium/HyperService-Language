@@ -18,7 +18,7 @@ import edu.cwru.rise.solidity.parser.SolidityParser;
 
 
 public class SolidityTypeAnalyzer {
-    public SolidityVisitor visitor = new SolidityVisitor();
+
     public static void main(String[] args) {
         try {
             // Create a scanner that reads from the input stream passed to us
@@ -58,7 +58,7 @@ public class SolidityTypeAnalyzer {
     }
 
     public SolidityVisitor sol(String file){
-        //SolidityVisitor visitor = new SolidityVisitor();
+        SolidityVisitor visitor = new SolidityVisitor();
         try {
             CharStream charStream = new ANTLRInputStream(new String(Files.readAllBytes(Paths.get(file))));
             Lexer lexer = new SolidityLexer(charStream);
@@ -80,7 +80,6 @@ public class SolidityTypeAnalyzer {
             parser.setBuildParseTree(false);
             // String res = t.toStringTree(parser);
             //System.out.println("tree:" + t.toStringTree(parser));
-
             visitor.visit(t);
         }catch (Exception e) {
             System.err.println("parser exception: " + e);
