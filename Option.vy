@@ -66,8 +66,8 @@ def stakeFund():
 @private
 def optionPrice(_proposal: wei_value) -> wei_value:
     factor: wei_value = as_wei_value(5,"wei")
-    if _proposal >= self.strikePrice:
-        return self.safeMul(factor, self.safeSub(self.strikePrice,_proposal))
+    assert _proposal >= self.strikePrice
+    return self.safeMul(factor, self.safeSub(self.strikePrice,_proposal))
 
 @public
 @payable

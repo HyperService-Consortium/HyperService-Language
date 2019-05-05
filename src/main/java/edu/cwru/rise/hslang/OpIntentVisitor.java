@@ -7,6 +7,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import edu.cwru.rise.golang.GoParser;
+import edu.cwru.rise.golang.GoVistor;
 import edu.cwru.rise.hslang.parser.HSlangBaseVisitor;
 import edu.cwru.rise.hslang.parser.HSlangParser;
 import edu.cwru.rise.solidity.SolidityTypeAnalyzer;
@@ -18,6 +20,7 @@ import edu.cwru.rise.vyper.VPVistor;
 public class OpIntentVisitor extends HSlangBaseVisitor<String> {
     SolidityTypeAnalyzer solidityParser = new SolidityTypeAnalyzer();
     VPParser vyperParser = new VPParser();
+    GoParser goParser = new GoParser();
     HashMap<String, Contract> contracts = new HashMap<>();
     HashMap<String, Type> contTypes = new HashMap<>();
 
@@ -258,9 +261,16 @@ public class OpIntentVisitor extends HSlangBaseVisitor<String> {
             contracts.putAll(visitor.contracts);
             contTypes.putAll(visitor.types);
         }else{
-               VPVistor visitor = vyperParser.vy(contractName);
-                contracts.putAll(visitor.contracts);
-                contTypes.putAll(visitor.types);
+              if(contractName.contains(".vy")) {
+                  VPVistor visitor = vyperParser.vy(contractName);
+                  contracts.putAll(visitor.contracts);
+                  contTypes.putAll(visitor.types);
+              }
+              else{
+                  GoVistor vistor = goParser.go(contractName);
+                  contracts.putAll(vistor.contracts);
+                  contTypes.putAll(vistor.types);
+              }
         }
         return super.visitImportDecl(ctx);
     }

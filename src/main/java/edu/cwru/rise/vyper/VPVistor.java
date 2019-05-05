@@ -140,6 +140,7 @@ public class VPVistor extends VyperBaseVisitor{
         }
         else{
             tmp.modifiers.add(Modifier.PRIVATE);
+            return super.visitFunctionDefinition(ctx);
         }
         for(DecoratorContext decor : ctx.decorators().decorator()){
             switch (decor.dec.getText()) {
