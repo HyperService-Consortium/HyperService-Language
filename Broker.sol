@@ -1,4 +1,4 @@
-pragma solidity 0.4.22;
+pragma solidity ^0.5.1;
 
 contract Broker {
     uint constant public MAX_OWNER_COUNT = 50;
@@ -39,12 +39,12 @@ contract Broker {
     }
 
     // Remember to specify at least one address and set the _required as one.
-    constructor(address[] _owners, uint _required)
+    constructor(address[] memory _owners, uint _required)
         public
         validRequirement(_owners.length, _required)
     {
         for (uint i = 0; i<_owners.length; i++) {
-            require(!isOwner[_owners[i]] && _owners[i] != 0);
+            require(!isOwner[_owners[i]] && _owners[i] != address(0));
             isOwner[_owners[i]] = true;
         }
         owners = _owners;
@@ -52,7 +52,7 @@ contract Broker {
     }
 
     function addOwner(address _newOwner) public ownerExists(msg.sender) validRequirement(owners.length + 1, requiredOwnerCount){
-        require(_newOwner != 0);
+        require(_newOwner != address(0));
         addingOwnerProposal[_newOwner][msg.sender] = true;
         uint vote_count = 0;
         for (uint i = 0; i < owners.length; i++) {
@@ -106,7 +106,7 @@ contract Broker {
         for (uint i = 0; i < valueProposals.length; i++) {
             uint cur_vote = 0;
             uint cur_value = valueProposals[i];
-            mapping (address => bool) proposal = valueVotes[cur_value];
+            mapping (address => bool) storage proposal = valueVotes[cur_value];
             for (uint j = 0; j < owners.length; j++) {
                 address owner = owners[j];
                 if (proposal[owner]) {
@@ -158,7 +158,7 @@ contract Broker {
         }
         // Remove the oldest value proposal.
         uint oldest_value = valueProposals[0];
-        for (i = 1; i < valueProposals.length; i++) {
+        for (uint i = 1; i < valueProposals.length; i++) {
             valueProposals[i-1] = valueProposals[i];
         }
         clearStaleValueVotes(oldest_value);

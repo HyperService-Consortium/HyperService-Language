@@ -106,6 +106,9 @@ public class VPVistor extends VyperBaseVisitor{
 
     @Override
     public Object visitStateVariableDeclaration(VyperParser.StateVariableDeclarationContext ctx) {
+        if(ctx.getText().contains("constant")){
+            return super.visitStateVariableDeclaration(ctx);
+        }
         String typeName = ctx.varType.getText();
         Type t = findType(typeName);
         Field f = new Field();

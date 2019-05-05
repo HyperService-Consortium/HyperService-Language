@@ -8,8 +8,8 @@ MIN_STAKE: constant(uint256) = 1
 DUMMYADDRESS: constant(address) = 0x0000000000000000000000000000000000000000
 
 
-remainingFund: public(wei_value)
-strikePrice: public(wei_value)
+remainingFund: public(wei_value) 
+strikePrice: public(wei_value) 
 owner: address
 
 optionBuyers: public(map(address,ValidBuyer))
@@ -17,7 +17,7 @@ optionBuyers: public(map(address,ValidBuyer))
 @public
 @payable
 def __init__(_owner: address, _strikePrice: wei_value):
-    assert msg.value >= INIT_STAKE
+    assert msg.value >= INIT_STAKE 
     self.remainingFund = msg.value
     self.strikePrice = _strikePrice
 
@@ -32,12 +32,12 @@ def safeAdd(a: wei_value, b: wei_value) -> wei_value:
     assert c >= a
     return c
 
-@private
+@private 
 def safeSub(a: wei_value, b: wei_value) -> wei_value:
     assert b <= a
     return a - b
 
-@private
+@private 
 def safeDiv(a: wei_value, b: wei_value) -> wei_value:
     assert b <= a
     assert b > 0
@@ -45,7 +45,7 @@ def safeDiv(a: wei_value, b: wei_value) -> wei_value:
     assert a == as_wei_value((b * c),"wei") + a % b
     return c
 
-@private
+@private 
 def safeMul(a: wei_value, b: wei_value) -> wei_value:
     c: wei_value = as_wei_value((a * b),"wei")
     assert a == 0 or as_wei_value((c / a),"wei") == b
@@ -66,8 +66,8 @@ def stakeFund():
 @private
 def optionPrice(_proposal: wei_value) -> wei_value:
     factor: wei_value = as_wei_value(5,"wei")
-    assert _proposal >= self.strikePrice
-    return self.safeMul(factor, self.safeSub(self.strikePrice,_proposal))
+    if _proposal >= self.strikePrice:
+        return self.safeMul(factor, self.safeSub(self.strikePrice,_proposal))
 
 @public
 @payable

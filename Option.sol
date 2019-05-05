@@ -1,4 +1,4 @@
-pragma solidity 0.4.22;
+pragma solidity ^0.5.1;
 
 contract Option {
     uint constant public INIT_STAKE = 10 wei;
@@ -13,6 +13,7 @@ contract Option {
         bool valid;
         bool executed;
     }
+
     mapping (address => ValidBuyer) public optionBuyers;
     
     modifier onlyOwner() {
@@ -42,7 +43,7 @@ contract Option {
     {
         remainingFund = msg.value;
         strikePrice = _strikePrice;
-        if (_owner == 0) {
+        if (_owner == address(0)) {
             owner = msg.sender;
         } else {
             owner = _owner;
