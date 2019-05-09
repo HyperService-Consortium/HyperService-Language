@@ -1,0 +1,73 @@
+[
+{
+  "name": "o1",
+  "type": "ContractInvocation",
+  "invoker": "a1",
+  "contract_domain": "Chain1",
+  "contract_addr": "0xafc7d2959e72081770304f6474151293be1fbba7",
+  "func": "getGenuineValue",
+  "parameters": []
+},
+{
+  "name": "o2",
+  "type": "ContractInvocation",
+  "invoker": "a2",
+  "contract_domain": "Chain2",
+  "contract_addr": "0x3723261b2a5a62b778b5c74318534d7fdf8db38c",
+  "func": "CashSettle",
+  "parameters": [
+    {
+      "Type": "uint",
+      "Value": {
+        "contract": "c1",
+        "field": "genuineValue",
+        "pos": "0"
+      }
+    }
+  ]
+},
+{
+  "name": "o3",
+  "type": "Payment",
+  "src": {
+    "domain": "chain1",
+    "user_name": "a1"
+  },
+  "dst": {
+    "domain": "chain3",
+    "user_name": "a3"
+  },
+  "amount": "10",
+  "unit": "wei"
+},
+{
+  "name": "o4",
+  "type": "ContractInvocation",
+  "invoker": "a3",
+  "contract_domain": "Chain3",
+  "contract_addr": "0x3723261b2a5a62b778b5c74318d34d7fdhhldb38c",
+  "func": "CashSettle",
+  "parameters": [
+    {
+      "Type": "uint",
+      "Value": {
+        "contract": "c2",
+        "field": "strikePrice",
+        "pos": "1"
+      }
+    }
+  ]
+}
+]
+"dependencies":[{
+  "left": "o1",
+  "right": "o2,o3",
+  "dep": "before"
+},
+{
+  "left": "o3",
+  "right": "o4",
+  "dep": "before"
+}
+]
+
