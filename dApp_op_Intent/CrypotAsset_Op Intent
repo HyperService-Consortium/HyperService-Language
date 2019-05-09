@@ -1,0 +1,39 @@
+[
+{
+  "name": "op1",
+  "type": "Payment",
+  "src": {
+    "domain": "chain2",
+    "user_name": "a2"
+  },
+  "dst": {
+    "domain": "chain1",
+    "user_name": "a1"
+  },
+  "amount": "20",
+  "unit": "wei"
+},
+{
+  "name": "op2",
+  "type": "ContractInvocation",
+  "invoker": "a1",
+  "contract_domain": "chain1",
+  "contract_addr": "0xafc7d2959e72081770304f6474151293be1fbba7",
+  "func": "deposit",
+  "parameters": [
+    {
+      "Type": "uint",
+      "Value": {
+        "constant": "10"
+      }
+    }
+  ]
+}
+]
+"dependencies":[{
+  "left": "op1",
+  "right": "op2",
+  "dep": "before"
+}
+]
+
