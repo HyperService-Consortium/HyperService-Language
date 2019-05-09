@@ -55,7 +55,6 @@ package edu.cwru.rise.golang.parser;
     private boolean noTerminatorBetween(int tokenOffset) {
         BufferedTokenStream stream = (BufferedTokenStream)_input;
         List<Token> tokens = stream.getHiddenTokensToLeft(stream.LT(tokenOffset).getTokenIndex());
-
         if (tokens == null) {
             return true;
         }
@@ -178,7 +177,7 @@ constSpec
 //
 //IdentifierList = identifier { "," identifier } .
 identifierList
-    : IDENTIFIER ( ',' IDENTIFIER )*
+    :IDENTIFIER ( ',' IDENTIFIER )*
     ;
 
 //ExpressionList = Expression { "," Expression } .
@@ -670,6 +669,7 @@ primaryExpr
     | primaryExpr typeAssertion
 	| primaryExpr arguments
 	| IDENTIFIER
+	| 'nil'
     ;
 
 selector

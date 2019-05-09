@@ -23,10 +23,14 @@ public class GoVistor extends GolangBaseVisitor{
     Contract cur;
     public HashMap<String, Type> types = new HashMap<>();
     public HashMap<String, Contract> contracts = new HashMap<>();
+    int count = 0;
 
     @Override
     public Object visitTypeSpec(GolangParser.TypeSpecContext ctx) {
         String tyName = ctx.IDENTIFIER().getText();
+        if(!Character.isUpperCase(tyName.charAt(0))){
+            return super.visitTypeSpec(ctx);
+        }
         StructTypeContext tmp = ctx.type().typeLit().structType();
         if(tmp != null){
             Contract cur = new Contract();
@@ -37,13 +41,18 @@ public class GoVistor extends GolangBaseVisitor{
                     Field f = new Field();
                     f.name = "anonymousField";
                     f.type = findType(fieldDec.anonymousField().getText());
+                    f.pos = String.valueOf(count++);
                     cur.fields.add(f);
                 }
                 else{
                     if(fieldDec.identifierList() != null){
+                        if(fieldDec.type().getText().contains("cmn")){
+                            continue;
+                        }
                         Field f = new Field();
                         f.name = fieldDec.identifierList().getText();
                         f.type  = findType(fieldDec.type().getText());
+                        f.pos = String.valueOf(count++);
                         cur.fields.add(f);
                     }
                 }
@@ -57,7 +66,11 @@ public class GoVistor extends GolangBaseVisitor{
         String contrName =ctx.receiver().type().getText().replace("*", "");
         Contract contr = contracts.get(contrName);
         Function func = new Function();
-        func.name = ctx.IDENTIFIER().getText();
+        String funcName = ctx.IDENTIFIER().getText();
+        if(!Character.isUpperCase(funcName.charAt(0))){
+            return super.visitMethodDecl(ctx);
+        }
+        func.name = funcName;
 
         if(ctx.function() != null){
             if(ctx.function().signature().parameters().parameterList() != null) {
@@ -91,12 +104,16 @@ public class GoVistor extends GolangBaseVisitor{
     private Type findType(String typename) {
         // may be need change?
         typename = typename.replace("*","");
-
+        typename = typename.replace("[]byte","address");
+        typename = typename.replace("math.Uint256","uint");
+        typename = typename.replace("localstorage.BytesMap","map[address]bool");
+        typename = typename.replace("localstorage.Int64Map","address[]");
         if (types.containsKey(typename)) {
             return types.get(typename);
         }
         Type t = new Type();
         if (typename.contains("map") && typename.contains("[")) {
+            typename = typename.replace("string","address");
             Mapping mapping = new Mapping();
             int i = findIndex(typename);
             String fromtypename = typename.substring(typename.indexOf("[") + 1, i).trim();

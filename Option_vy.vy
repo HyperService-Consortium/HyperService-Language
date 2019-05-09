@@ -82,7 +82,7 @@ def buyOption(_proposal: wei_value):
 
 @public
 @payable
-def CashSettle(genuinePrice: uint256):
+def CashSettle(genuinePrice: wei_value):
     assert self.remainingFund > MIN_STAKE
     assert self.optionBuyers[msg.sender].valid
     assert not self.optionBuyers[msg.sender].executed

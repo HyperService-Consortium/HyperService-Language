@@ -19,7 +19,8 @@ public class OpIntentParser {
     public static void main(String[] args) {
         try {
             // Create a scanner that reads from the input stream passed to us
-            String file = "demoTest.hsl";
+           // String file = "demoTest.hsl";
+            String file = "federated_admin.hsl";
             CharStream charStream = new ANTLRInputStream(new String(Files.readAllBytes(Paths.get(file))));
             Lexer lexer = new HSlangLexer(charStream);
 

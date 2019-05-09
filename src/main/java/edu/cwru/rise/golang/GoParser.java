@@ -24,7 +24,7 @@ public class GoParser {
     public static void main(String[] args) {
         try {
             // Create a scanner that reads from the input stream passed to us
-            String file = "Option.go";
+            String file = "option.go";
             CharStream charStream = new ANTLRInputStream(new String(Files.readAllBytes(Paths.get(file))));
             Lexer lexer = new GolangLexer(charStream);
 
