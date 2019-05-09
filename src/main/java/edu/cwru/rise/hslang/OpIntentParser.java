@@ -21,8 +21,8 @@ public class OpIntentParser {
             // Create a scanner that reads from the input stream passed to us
 
             //String file = "contracts/DelegateAdmin/federated_admin.hsl";
-              String file = "contracts/Finance/demoTest.hsl";
-            //String file = "contracts/CrypotAsset/asset_simplified.hsl";
+            //String file = "contracts/Finance/demoTest.hsl";
+            String file = "contracts/CrypotAsset/asset_simplified.hsl";
             CharStream charStream = new ANTLRInputStream(new String(Files.readAllBytes(Paths.get(file))));
             Lexer lexer = new HSlangLexer(charStream);
 
