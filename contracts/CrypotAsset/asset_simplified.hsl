@@ -1,0 +1,12 @@
+import ("contracts/CrypotAsset/asset.sol")
+
+account a1 = chain1::"0x7019fa779024c0a0eac1d8475733eefe10a49f3b" // account addr
+account a2 = chain2::"0x47a1cdb6594d6efed3a6b917f2fbaa2bbcf61a2e"
+
+contract c1 = chain1::CryptoAsset("0xafc7d2959e72081770304f6474151293be1fbba7")  // contract addr
+
+op op1 payment 20 "wei" from a2 to a1
+op op2 call c1.deposit(10) using a1
+
+dep:
+op1 before op2

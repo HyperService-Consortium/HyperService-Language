@@ -22,7 +22,7 @@ public class SolidityTypeAnalyzer {
     public static void main(String[] args) {
         try {
             // Create a scanner that reads from the input stream passed to us
-            String file = "Broker.sol";
+            String file = "contracts/CrypotAsset/asset.sol";
             CharStream charStream = new ANTLRInputStream(new String(Files.readAllBytes(Paths.get(file))));
             Lexer lexer = new SolidityLexer(charStream);
 

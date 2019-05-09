@@ -1,6 +1,6 @@
-import ("federal.sol")
-import ("delegate.vy")
-import ("delegate.go")
+import ("contracts/DelegateAdmin/federal.sol")
+import ("contracts/DelegateAdmin/delegate.vy")
+import ("contracts/DelegateAdmin/delegate.go")
 
 account a1 = chain1::"0x7019fa779024c0a0eac1d8475733eefe10a49f3b" // account addr
 account a2 = chain2::"0x47a1cdb6594d6efed3a6b917f2fbaa2bbcf61a2e"

@@ -814,4 +814,5 @@ WS
   ;
 
 LINE_COMMENT
-  : ('#'| 'return') ~[\r\n]* -> channel(HIDDEN) ;
+  : //('#'| 'return') ~[\r\n]* -> channel(HIDDEN)
+    '#' ~[\r\n]* -> channel(HIDDEN) ;// ;

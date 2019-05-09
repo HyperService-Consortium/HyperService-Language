@@ -19,16 +19,16 @@ public class OpIntentParser {
     public static void main(String[] args) {
         try {
             // Create a scanner that reads from the input stream passed to us
-           // String file = "demoTest.hsl";
-            String file = "federated_admin.hsl";
+
+            String file = "contracts/DelegateAdmin/federated_admin.hsl";
             CharStream charStream = new ANTLRInputStream(new String(Files.readAllBytes(Paths.get(file))));
             Lexer lexer = new HSlangLexer(charStream);
 
             CommonTokenStream tokens = new CommonTokenStream(lexer);
-//			long start = System.currentTimeMillis();
-//			tokens.fill(); // load all and check time
-//			long stop = System.currentTimeMillis();
-//			lexerTime += stop-start;
+			long start = System.currentTimeMillis();
+			tokens.fill(); // load all and check time
+			long stop = System.currentTimeMillis();
+			long lexerTime = stop-start;
 
             // Create a parser that reads from the scanner
             HSlangParser parser = new HSlangParser(tokens);

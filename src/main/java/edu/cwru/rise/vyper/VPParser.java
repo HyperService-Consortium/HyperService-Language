@@ -23,7 +23,7 @@ public class VPParser {
 
     public static void main(String[] args) {
         try {
-            String file = "Option.vy";
+            String file = "Option_vy.vy";
             String[] names = file.split("/|\\.");
             int size = names.length-2;
             CharStream charStream = new ANTLRInputStream(new String(Files.readAllBytes(Paths.get(file))));
