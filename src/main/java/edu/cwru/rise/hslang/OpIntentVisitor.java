@@ -37,6 +37,7 @@ public class OpIntentVisitor extends HSlangBaseVisitor<String> {
     int[] inDegree = new int[1];
     HashSet<String> visted = new HashSet<>();
 
+
     @Override
     public String visitPaymentSpec(HSlangParser.PaymentSpecContext ctx) {
         String opName = ctx.opname.getText();
@@ -253,25 +254,32 @@ public class OpIntentVisitor extends HSlangBaseVisitor<String> {
 
     @Override
     public String visitImportDecl(HSlangParser.ImportDeclContext ctx) {
+        long start = System.currentTimeMillis();
         String contractName = ctx.importSpec().getText(); //get import contract name
         //System.out.print(contractName);
         contractName = contractName.replace("\"",""); // remove the " "
+
         if(contractName.contains(".sol")) {
             SolidityVisitor visitor = solidityParser.sol(contractName); // invoke solidity parse to parse the contract file
+
             contracts.putAll(visitor.contracts);
             contTypes.putAll(visitor.types);
-        }else{
-              if(contractName.contains(".vy")) {
-                  VPVistor visitor = vyperParser.vy(contractName);
-                  contracts.putAll(visitor.contracts);
-                  contTypes.putAll(visitor.types);
-              }
-              else{
-                  GoVistor vistor = goParser.go(contractName);
-                  contracts.putAll(vistor.contracts);
-                  contTypes.putAll(vistor.types);
-              }
         }
+        if(contractName.contains(".vy")) {
+            VPVistor visitor = vyperParser.vy(contractName);
+            //tmp = System.currentTimeMillis();
+            contracts.putAll(visitor.contracts);
+            contTypes.putAll(visitor.types);
+        }
+        if(contractName.contains(".go")){
+            GoVistor vistor = goParser.go(contractName);
+            //tmp = System.currentTimeMillis();
+            contracts.putAll(vistor.contracts);
+            contTypes.putAll(vistor.types);
+        }
+        long tmp = System.currentTimeMillis();
+        long lexerTime = tmp-start;
+        System.out.println("import " + contractName + " costs: " + lexerTime);
         return super.visitImportDecl(ctx);
     }
 

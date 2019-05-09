@@ -14,7 +14,6 @@ import java.nio.file.Paths;
 
 import edu.cwru.rise.golang.parser.GolangLexer;
 import edu.cwru.rise.golang.parser.GolangParser;
-import edu.cwru.rise.hslang.Contract;
 
 
 /**
@@ -43,11 +42,6 @@ public class GoParser {
 
             GoVistor visitor = new GoVistor();
             visitor.visit(t);
-            for (Contract c:
-                    visitor.contracts.values()) {
-                System.out.println(c);
-            }
-
 
         } catch (Exception e) {
             System.err.println("parser exception: " + e);
@@ -74,8 +68,8 @@ public class GoParser {
             // start parsing at the compilationUnit rule
             ParserRuleContext t = parser.sourceFile();
             parser.setBuildParseTree(false);
-            visitor.visit(t);
 
+            visitor.visit(t);
         } catch (Exception e) {
             System.err.println("parser exception: " + e);
             e.printStackTrace();   // so we can get stack trace
