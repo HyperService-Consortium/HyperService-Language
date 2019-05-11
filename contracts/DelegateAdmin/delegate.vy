@@ -45,9 +45,9 @@ def addDelegate(_newDelegate: address):
             vote_count += 1
 
     if vote_count >= NIN_PROPOSAL_COUNT:
-        self.num_count += 1
         self.delegates[self.num_count] = _newDelegate
         self.isDelegate[_newDelegate] = True
+        self.num_count += 1
 
 
 @public

@@ -12,7 +12,7 @@ contract c3 = Chain3::Option("0x3723261b2a5a62b778b5c74318d34d7fdhhldb38c")
 
 op o1 call c1.getGenuineValue() using a1 // no parameters
 op o2 call c2.CashSettle(c1.genuineValue) using a2 // use the value of state variable genuineValue of c1 as the parameter
-op o3 payment 10 "wei" from a1 to a3
+op o3 payment 10 "ether" from a1 to a3 with 1 "ether" as 2 "XYZ"
 op o4 call c3.CashSettle(c2.strikePrice) using a3
 
 dep:
