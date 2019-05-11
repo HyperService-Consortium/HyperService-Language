@@ -1,0 +1,19 @@
+import ("contracts/Finance/Broker.sol")
+import ("contracts/Finance/Option_vy.vy")
+import ("contracts/Finance/option.go")
+
+account a1 = EthereumX::"0x7019fa779024c0a0eac1d8475733eefe10a49f3b" // account addr
+account a2 = EthereumY::"0x47a1cdb6594d6efed3a6b917f2fbaa2bbcf61a2e"
+account a3 = Tendermint::"0x47a1cdb6559d6efed3a6b917f2fbaa2bbcf61a2e"
+contract c1 = EthereumX::Broker("0xafc7d2959e72081770304f6474151293be1fbba7")  // contract addr
+contract c2 = EthereumY::Option_vy("0x3723261b2a5a62b778b5c74318534d7fdf8db38c")  // contract addr
+contract c3 = Tendermint::Option("0x3723261b2a5a62b778b5c74318d34d7fdhhldb38c")
+
+op o1 call c1.getGenuineValue() using a1 // no parameters
+op o2 call c2.CashSettle(c1.genuineValue) using a2 // use the value of state variable genuineValue of c1 as the parameter
+op o3 payment 10 "ether" from a1 to a3 with 1 "ether" as 2 "XYZ"
+op o4 call c3.CashSettle(c2.strikePrice) using a3
+
+dep:
+o1 before o2,o3
+o3 before o4

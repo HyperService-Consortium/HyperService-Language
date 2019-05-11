@@ -11,7 +11,8 @@
     "user_name": "a1"
   },
   "amount": "20",
-  "unit": "wei"
+  "unit": "ether",
+  "ratio": "1 ether as XYZ"
 },
 {
   "name": "op2",
@@ -36,4 +37,3 @@
   "dep": "before"
 }
 ]
-
