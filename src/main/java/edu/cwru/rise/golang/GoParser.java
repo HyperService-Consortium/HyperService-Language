@@ -14,6 +14,7 @@ import java.nio.file.Paths;
 
 import edu.cwru.rise.golang.parser.GolangLexer;
 import edu.cwru.rise.golang.parser.GolangParser;
+import edu.cwru.rise.hslang.Contract;
 
 
 /**
@@ -23,7 +24,7 @@ public class GoParser {
     public static void main(String[] args) {
         try {
             // Create a scanner that reads from the input stream passed to us
-            String file = "option.go";
+            String file = "contracts/DelegateAdmin/delegate.go";
             CharStream charStream = new ANTLRInputStream(new String(Files.readAllBytes(Paths.get(file))));
             Lexer lexer = new GolangLexer(charStream);
 
@@ -42,6 +43,10 @@ public class GoParser {
 
             GoVistor visitor = new GoVistor();
             visitor.visit(t);
+            for (Contract c:
+                    visitor.contracts.values()) {
+                System.out.println(c);
+            }
 
         } catch (Exception e) {
             System.err.println("parser exception: " + e);

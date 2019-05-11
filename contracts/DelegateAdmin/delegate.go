@@ -13,7 +13,7 @@ import (
 
 var count int = 0
 
-const NIN_PROPOSAL_COUNT = 5;
+const NIN_PROPOSAL_COUNT = 5
 
 type Delegate struct {
 	env 						*cmn.ContractEnvironment
