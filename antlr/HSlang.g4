@@ -203,7 +203,8 @@ numericallit
 
 
 paymentSpec
-    : 'op' opname=IDENTIFIER 'payment' amt=numericallit unit=STRING_LIT 'from' fromacct=IDENTIFIER 'to' toacct=IDENTIFIER ('with' amtuint=numericallit STRING_LIT 'as' newamt=numericallit newuint=STRING_LIT)?
+    : 'op' opname=IDENTIFIER 'payment' amt=numericallit unit=STRING_LIT 'from' fromacct=IDENTIFIER 'to' toacct=IDENTIFIER
+    ('with' amtuint=numericallit STRING_LIT 'as' newamt=numericallit newuint=STRING_LIT)?
     ;
 
 contractInvocationSpec

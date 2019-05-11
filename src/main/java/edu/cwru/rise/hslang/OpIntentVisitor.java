@@ -59,8 +59,12 @@ public class OpIntentVisitor extends HSlangBaseVisitor<String> {
 
             dst.domain = defiVar.get(dstmp);
             String amount = ctx.amt.getText();
-            String unit = ctx.unit.getText().replace("\"", "");
-            Payment opPay = new Payment(opName,src,dst, amount, unit);
+            String unit = ctx.unit.getText().replace("\"","");
+            String newuint = ctx.newuint.getText().replace("\"","");
+            StringBuffer rati = new StringBuffer();
+            rati.append(ctx.amtuint.getText() + " ");
+            rati.append(unit + " as " + newuint);
+            Payment opPay = new Payment(opName,src,dst, amount, unit, rati.toString());
 
             output.append(opPay.toJson());
             output.append(",\n");

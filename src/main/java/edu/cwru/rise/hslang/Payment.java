@@ -13,14 +13,16 @@ public class Payment {
     public Sources dst;
     public String amount;
     public String unit;
+    public String ratio;
 
-    public Payment(String name,Sources src, Sources dst, String amount, String unit){
+    public Payment(String name,Sources src, Sources dst, String amount, String unit, String ratio){
         this.name = name;
         this.type = "Payment";
         this.src = src;
         this.dst = dst;
         this.amount= amount;
         this.unit = unit;
+        this.ratio = ratio;
     }
 
     public String toJson() {
