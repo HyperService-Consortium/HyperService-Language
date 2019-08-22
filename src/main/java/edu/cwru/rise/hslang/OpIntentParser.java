@@ -19,15 +19,14 @@ public class OpIntentParser {
     public static void main(String[] args) {
         try {
             // Create a scanner that reads from the input stream passed to us
-
-            //String file = "contracts/DelegateAdmin/federated_admin.hsl";
-            //String file = "contracts/Finance/demoTest.hsl";
-            String file = "contracts/CrypotAsset/asset_simplified.hsl";
+            String file = "contracts/DelegateAdmin/federated_admin.hsl";
+            //String file = "contracts/Finance/option.hsl";
+            //String file = "contracts/CrypotAsset/asset_simplified.hsl";
             CharStream charStream = new ANTLRInputStream(new String(Files.readAllBytes(Paths.get(file))));
             Lexer lexer = new HSlangLexer(charStream);
 
             CommonTokenStream tokens = new CommonTokenStream(lexer);
-			long start = System.currentTimeMillis();
+			//long start = System.currentTimeMillis();
 			tokens.fill(); // load all and check time
 
 
@@ -50,7 +49,7 @@ public class OpIntentParser {
             if(dep.equals("\"dependencies\":[")){
                 throw new HSLParsingException("Wrong dependencies");
             }
-            if(visitor.visted.size() != visitor.setNum.size()){
+            if(visitor.visited.size() != visitor.setNum.size()){
                 throw new HSLParsingException("Incomplete dependencies");
             }
             String eol = ",\n";
@@ -60,10 +59,11 @@ public class OpIntentParser {
             System.out.println(out + "\n]");
             dep = dep.substring(0, dep.length()-eolLen);
             System.out.println(dep + "\n]");
-
+            /*
             long stop = System.currentTimeMillis();
             long lexerTime = stop-start;
             System.out.println("time: "+ lexerTime);
+            */
 
         } catch (Exception e) {
             System.err.println("parser exception: " + e);

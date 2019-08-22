@@ -1,7 +1,7 @@
 // load contracts for type information
 import ("contact1.sol")
-import ("contact2.sol")
-import ("contact3.sol")
+import ("contact2.vy")
+import ("contact3.go")
 
 account a1 = chain1::"0x692a70d2e424a56d2c6c27aa97d1a86395877b3a" // account address
 account a2 = chain2::"0x692a70d2e424a56d2c6c27aa97d1a86395877b3b"

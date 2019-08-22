@@ -1,4 +1,4 @@
-package edu.cwru.rise.hslang;
+package edu.cwru.rise.hslang.structure;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

@@ -1,4 +1,4 @@
-package edu.cwru.rise.hslang;
+package edu.cwru.rise.hslang.structure;
 
 public enum Modifier {
     EXTERNAL,

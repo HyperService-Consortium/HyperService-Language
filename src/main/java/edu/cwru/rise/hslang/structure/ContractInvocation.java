@@ -1,4 +1,5 @@
-package edu.cwru.rise.hslang;
+package edu.cwru.rise.hslang.structure;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -11,18 +12,16 @@ public class ContractInvocation {
     public String name;
     public String type;
     public String invoker;
-    public String contract_domain;
-    public String contract_addr;
     public String func;
+    public Sources contract;
     public List<Inputs> parameters;
 
-    public ContractInvocation(String name, String invoker, String contract_domain, String contract_addr,
+    public ContractInvocation(String name, String invoker, Sources contract,
                               String func, List<Inputs> parameters){
         this.name = name;
         this.type = "ContractInvocation";
         this.invoker = invoker;
-        this.contract_domain = contract_domain;
-        this.contract_addr = contract_addr;
+        this.contract = contract;
         this.func = func;
         this.parameters = parameters;
     }

@@ -14,7 +14,7 @@ import java.nio.file.Paths;
 
 import edu.cwru.rise.golang.parser.GolangLexer;
 import edu.cwru.rise.golang.parser.GolangParser;
-import edu.cwru.rise.hslang.Contract;
+import edu.cwru.rise.hslang.structure.*;
 
 
 /**

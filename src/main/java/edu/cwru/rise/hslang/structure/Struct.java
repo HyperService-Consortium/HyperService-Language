@@ -1,4 +1,4 @@
-package edu.cwru.rise.hslang;
+package edu.cwru.rise.hslang.structure;
 
 import java.util.ArrayList;
 import java.util.List;

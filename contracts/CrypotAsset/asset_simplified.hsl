@@ -1,3 +1,7 @@
+/*
+demon example for hsl
+*/
+
 import ("contracts/CrypotAsset/asset.sol")
 
 account a1 = chain1::"0x7019fa779024c0a0eac1d8475733eefe10a49f3b" // account addr

@@ -8,13 +8,7 @@ import edu.cwru.rise.golang.parser.GolangParser.FieldDeclContext;
 import edu.cwru.rise.golang.parser.GolangParser.MethodDeclContext;
 import edu.cwru.rise.golang.parser.GolangParser.ParameterDeclContext;
 import edu.cwru.rise.golang.parser.GolangParser.StructTypeContext;
-import edu.cwru.rise.hslang.Array;
-import edu.cwru.rise.hslang.Contract;
-import edu.cwru.rise.hslang.Field;
-import edu.cwru.rise.hslang.Function;
-import edu.cwru.rise.hslang.Mapping;
-import edu.cwru.rise.hslang.Parameter;
-import edu.cwru.rise.hslang.Type;
+import edu.cwru.rise.hslang.structure.*;
 
 /**
  * Created by {Jian Shi} on 2019/4/27.

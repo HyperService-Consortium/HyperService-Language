@@ -2,8 +2,8 @@ package edu.cwru.rise.javascript;
 
 import java.util.HashMap;
 
-import edu.cwru.rise.hslang.Contract;
-import edu.cwru.rise.hslang.*;
+
+import edu.cwru.rise.hslang.structure.*;
 import edu.cwru.rise.javascript.parser.JavaScriptParser;
 import edu.cwru.rise.javascript.parser.JavaScriptParserBaseVisitor;
 import edu.cwru.rise.javascript.parser.JavaScriptParser.*;

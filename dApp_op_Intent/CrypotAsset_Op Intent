@@ -18,9 +18,11 @@
   "name": "op2",
   "type": "ContractInvocation",
   "invoker": "a1",
-  "contract_domain": "chain1",
-  "contract_addr": "0xafc7d2959e72081770304f6474151293be1fbba7",
   "func": "deposit",
+  "contract": {
+    "domain": "chain1",
+    "address": "0xafc7d2959e72081770304f6474151293be1fbba7"
+  },
   "parameters": [
     {
       "Type": "uint",

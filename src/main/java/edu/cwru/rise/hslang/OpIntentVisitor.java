@@ -5,12 +5,25 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 import edu.cwru.rise.golang.GoParser;
 import edu.cwru.rise.golang.GoVistor;
 import edu.cwru.rise.hslang.parser.HSlangBaseVisitor;
 import edu.cwru.rise.hslang.parser.HSlangParser;
+import edu.cwru.rise.hslang.structure.Contract;
+import edu.cwru.rise.hslang.structure.ContractInvocation;
+import edu.cwru.rise.hslang.structure.Dependencies;
+import edu.cwru.rise.hslang.structure.Field;
+import edu.cwru.rise.hslang.structure.Function;
+import edu.cwru.rise.hslang.structure.Inputs;
+import edu.cwru.rise.hslang.structure.Parameter;
+import edu.cwru.rise.hslang.structure.Payment;
+import edu.cwru.rise.hslang.structure.Sources;
+import edu.cwru.rise.hslang.structure.Type;
+import edu.cwru.rise.hslang.structure.Value;
 import edu.cwru.rise.solidity.SolidityTypeAnalyzer;
 import edu.cwru.rise.solidity.SolidityVisitor;
 import edu.cwru.rise.vyper.VPParser;
@@ -18,26 +31,43 @@ import edu.cwru.rise.vyper.VPVistor;
 
 
 public class OpIntentVisitor extends HSlangBaseVisitor<String> {
-    SolidityTypeAnalyzer solidityParser = new SolidityTypeAnalyzer();
-    VPParser vyperParser = new VPParser();
-    GoParser goParser = new GoParser();
-    HashMap<String, Contract> contracts = new HashMap<>();
-    HashMap<String, Type> contTypes = new HashMap<>();
 
-    HashMap<String, HashMap<String,String>> chainAccount = new HashMap<>(); // chainID / id address
-    HashMap<String, String> defiVar = new HashMap<>();  //id chainID
-    HashMap<String, String> defiVrAddr = new HashMap<>(); // id / address
-    HashSet<String> opSet = new HashSet<>(); // store operation
+    private SolidityTypeAnalyzer solidityParser;
+    private VPParser vyperParser;
+    private GoParser goParser;
 
-    public StringBuffer output = new StringBuffer("[\n");
-    public StringBuffer res = new StringBuffer("\"dependencies\":[");
-    public int numOp = 0;
-    HashMap<String, Integer> setNum = new HashMap<>();
-    HashMap<Integer, List<Integer>> adjList = new HashMap<>();
-    int[] inDegree = new int[1];
-    HashSet<String> visted = new HashSet<>();
+    private Map<String, Contract> contracts;
+    private Map<String, Type> contTypes;
+    private Map<String, HashMap<String,String>> chainAccount;
+    private Map<String, String> defiVar, defiVrAddr;
+    private Map<Integer, List<Integer>> adjList;
+    private int[] inDegree;
+    public Map<String, Integer> setNum;
+    public Set<String> opSet, visited;
+    public StringBuffer output, res;
+    public int numOp;
 
 
+    public OpIntentVisitor(){
+        this.solidityParser = new SolidityTypeAnalyzer();
+        this.vyperParser = new VPParser();
+        this.goParser = new GoParser();
+        this.contracts = new HashMap<>();
+        this.contTypes = new HashMap<>();
+
+        this.chainAccount = new HashMap<>(); // chainID / id address
+        this.defiVar = new HashMap<>();  //id chainID
+        this.defiVrAddr = new HashMap<>(); // id / address
+        this.opSet = new HashSet<>(); // store operation
+
+        this.output = new StringBuffer("[\n");
+        this.res = new StringBuffer("\"dependencies\":[");
+        this.numOp = 0;
+        this.setNum = new HashMap<>();
+        this.adjList = new HashMap<>();
+        this.inDegree = new int[1];
+        this.visited = new HashSet<>();
+    }
     @Override
     public String visitPaymentSpec(HSlangParser.PaymentSpecContext ctx) {
         String opName = ctx.opname.getText();
@@ -117,16 +147,17 @@ public class OpIntentVisitor extends HSlangBaseVisitor<String> {
 
             String name = ctx.opname.getText();
             String contract_code = ctx.recv.getText();
-            String contract_domain = defiVar.get(contract_code);  // chainID
-            String contract_addr = defiVrAddr.get(contract_code).replace("\"", "");
 
+            Sources contract = new Sources();
+            contract.domain = defiVar.get(contract_code);
+            contract.address = defiVrAddr.get(contract_code).replace("\"", "");
             List<Inputs> in = new ArrayList<>();
             if (res.args.isEmpty()) {
                 if (ctx.args != null) {
                     throw new HSLParsingException("Invaid inputs");
                 }
                 opCheck(opName);
-                ContractInvocation conIn = new ContractInvocation(name, invoker, contract_domain, contract_addr, funcName, in);
+                ContractInvocation conIn = new ContractInvocation(name, invoker, contract, funcName, in);
                 output.append(conIn.toJson());
                 output.append(",\n");
                 setNum.put(opName, numOp++);
@@ -154,7 +185,7 @@ public class OpIntentVisitor extends HSlangBaseVisitor<String> {
                     in.add(arg);
                 }
                 opCheck(opName);
-                ContractInvocation conIn = new ContractInvocation(name, invoker, contract_domain, contract_addr, funcName, in);
+                ContractInvocation conIn = new ContractInvocation(name, invoker, contract, funcName, in);
                 output.append(conIn.toJson());
                 output.append(",\n");
                 setNum.put(opName, numOp++);
@@ -258,7 +289,7 @@ public class OpIntentVisitor extends HSlangBaseVisitor<String> {
 
     @Override
     public String visitImportDecl(HSlangParser.ImportDeclContext ctx) {
-        long start = System.currentTimeMillis();
+        //long start = System.currentTimeMillis();
         String contractName = ctx.importSpec().getText(); //get import contract name
         //System.out.print(contractName);
         contractName = contractName.replace("\"",""); // remove the " "
@@ -281,9 +312,11 @@ public class OpIntentVisitor extends HSlangBaseVisitor<String> {
             contracts.putAll(vistor.contracts);
             contTypes.putAll(vistor.types);
         }
+        /*
         long tmp = System.currentTimeMillis();
         long lexerTime = tmp-start;
         System.out.println("import " + contractName + " costs: " + lexerTime);
+        */
         return super.visitImportDecl(ctx);
     }
 
@@ -302,7 +335,7 @@ public class OpIntentVisitor extends HSlangBaseVisitor<String> {
             if (!opSet.contains(left)) {
                 throw new HSLParsingException(left + " is not exist");
             }
-            visted.add(left);
+            visited.add(left);
             int preNode = setNum.get(left);
             for(String r : rights) {
                 if(r.equals(left)){
@@ -312,7 +345,7 @@ public class OpIntentVisitor extends HSlangBaseVisitor<String> {
                 if (!opSet.contains(r)) {
                     throw new HSLParsingException(r + " is not exist");
                 }
-                visted.add(r);
+                visited.add(r);
                 int node = setNum.get(r);
                 if(dep.equals("before")) {
                     if(adjList.containsKey(preNode)) {

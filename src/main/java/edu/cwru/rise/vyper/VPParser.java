@@ -12,7 +12,7 @@ import org.antlr.v4.runtime.atn.PredictionMode;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-import edu.cwru.rise.hslang.Contract;
+import edu.cwru.rise.hslang.structure.*;
 import edu.cwru.rise.vyper.parser.VyperLexer;
 import edu.cwru.rise.vyper.parser.VyperParser;
 

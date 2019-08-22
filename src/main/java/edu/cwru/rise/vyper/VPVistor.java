@@ -4,15 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import edu.cwru.rise.hslang.Array;
-import edu.cwru.rise.hslang.Contract;
-import edu.cwru.rise.hslang.Field;
-import edu.cwru.rise.hslang.Function;
-import edu.cwru.rise.hslang.Mapping;
-import edu.cwru.rise.hslang.Modifier;
-import edu.cwru.rise.hslang.Parameter;
-import edu.cwru.rise.hslang.Struct;
-import edu.cwru.rise.hslang.Type;
+import edu.cwru.rise.hslang.structure.*;
 import edu.cwru.rise.vyper.parser.VyperBaseVisitor;
 import edu.cwru.rise.vyper.parser.VyperParser;
 import edu.cwru.rise.vyper.parser.VyperParser.DecoratorContext;

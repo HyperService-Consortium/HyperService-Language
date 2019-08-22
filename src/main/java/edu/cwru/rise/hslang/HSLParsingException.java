@@ -6,7 +6,6 @@ package edu.cwru.rise.hslang;
 public class HSLParsingException extends Exception {
 
     public HSLParsingException(){
-
         super();
     }
 
@@ -15,12 +14,10 @@ public class HSLParsingException extends Exception {
     }
 
     public HSLParsingException(String message, Throwable cause){
-
         super(message,cause);
     }
 
     public HSLParsingException(Throwable cause) {
-
         super(cause);
     }
 

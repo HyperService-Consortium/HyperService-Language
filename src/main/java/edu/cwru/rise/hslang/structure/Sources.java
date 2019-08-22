@@ -1,4 +1,4 @@
-package edu.cwru.rise.hslang;
+package edu.cwru.rise.hslang.structure;
 
 /**
  * Created by {Jian Shi} on 2019/4/2.
@@ -6,4 +6,5 @@ package edu.cwru.rise.hslang;
 public class Sources {
     public String domain;
     public String user_name;
+    public String address;
 }

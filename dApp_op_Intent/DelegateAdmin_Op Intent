@@ -3,18 +3,22 @@
   "name": "op1",
   "type": "ContractInvocation",
   "invoker": "a2",
-  "contract_domain": "Chain2",
-  "contract_addr": "0x3723261b2a5a62b778b5c74318534d7fdf8db38c",
   "func": "vote",
+  "contract": {
+    "domain": "Chain2",
+    "address": "0x3723261b2a5a62b778b5c74318534d7fdf8db38c"
+  },
   "parameters": []
 },
 {
   "name": "op2",
   "type": "ContractInvocation",
   "invoker": "a1",
-  "contract_domain": "Chain1",
-  "contract_addr": "0xafc7d2959e72081770304f6474151293be1fbba7",
   "func": "submitVotes",
+  "contract": {
+    "domain": "Chain1",
+    "address": "0xafc7d2959e72081770304f6474151293be1fbba7"
+  },
   "parameters": [
     {
       "Type": "string",
@@ -38,18 +42,22 @@
   "name": "op3",
   "type": "ContractInvocation",
   "invoker": "a3",
-  "contract_domain": "Chain3",
-  "contract_addr": "0x3723261b2a5a62b778b5c74318d34d7fdhhldb38c",
   "func": "Vote",
+  "contract": {
+    "domain": "Chain3",
+    "address": "0x3723261b2a5a62b778b5c74318d34d7fdhhldb38c"
+  },
   "parameters": []
 },
 {
   "name": "op4",
   "type": "ContractInvocation",
   "invoker": "a1",
-  "contract_domain": "Chain1",
-  "contract_addr": "0xafc7d2959e72081770304f6474151293be1fbba7",
   "func": "submitVotes",
+  "contract": {
+    "domain": "Chain1",
+    "address": "0xafc7d2959e72081770304f6474151293be1fbba7"
+  },
   "parameters": [
     {
       "Type": "string",

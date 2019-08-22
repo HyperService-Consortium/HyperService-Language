@@ -1,3 +1,7 @@
+/*
+demon example for hsl
+*/
+
 import ("contracts/DelegateAdmin/federal.sol")
 import ("contracts/DelegateAdmin/delegate.vy")
 import ("contracts/DelegateAdmin/delegate.go")

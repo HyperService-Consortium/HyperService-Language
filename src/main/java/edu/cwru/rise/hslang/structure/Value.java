@@ -1,4 +1,4 @@
-package edu.cwru.rise.hslang;
+package edu.cwru.rise.hslang.structure;
 
 /**
  * Created by {Jian Shi} on 2019/4/2.
