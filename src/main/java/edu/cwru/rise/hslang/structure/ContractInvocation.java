@@ -9,6 +9,7 @@ import java.util.List;
  * Created by {Jian Shi} on 2019/3/27.
  */
 public class ContractInvocation {
+
     public String name;
     public String type;
     public String invoker;
@@ -26,6 +27,10 @@ public class ContractInvocation {
         this.parameters = parameters;
     }
 
+    /**
+     * convert the object to json
+     * @return A json string
+     */
     public String toJson() {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         return gson.toJson(this);

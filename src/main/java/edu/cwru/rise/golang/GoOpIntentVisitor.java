@@ -13,15 +13,21 @@ import edu.cwru.rise.hslang.structure.*;
 /**
  * Created by {Jian Shi} on 2019/4/27.
  */
-public class GoVistor extends GolangBaseVisitor{
-    Contract cur;
-    public HashMap<String, Type> types = new HashMap<>();
-    public HashMap<String, Contract> contracts = new HashMap<>();
-    int count = 0;
+public class GoOpIntentVisitor extends GolangBaseVisitor{
+    public Contract cur; // contract been imported
+    public HashMap<String, Type> types = new HashMap<>();  // store contrats' type
+    public HashMap<String, Contract> contracts = new HashMap<>(); // store all contratcs that been imported
+    int count = 0; // rank field order
 
+    /**
+     * find the struct and get all the fields in the struct
+     * @param ctx struct
+     * @return object
+     */
     @Override
     public Object visitTypeSpec(GolangParser.TypeSpecContext ctx) {
         String tyName = ctx.IDENTIFIER().getText();
+        // Only record the struct that name's first letter is Capital letter
         if(!Character.isUpperCase(tyName.charAt(0))){
             return super.visitTypeSpec(ctx);
         }
@@ -30,6 +36,7 @@ public class GoVistor extends GolangBaseVisitor{
             Contract cur = new Contract();
             cur.name = tyName;
             contracts.put(tyName, cur);
+            //Get field information
             for(FieldDeclContext fieldDec : tmp.fieldDecl()){
                 if(fieldDec.anonymousField()!= null){
                     Field f = new Field();
@@ -55,18 +62,25 @@ public class GoVistor extends GolangBaseVisitor{
         return super.visitTypeSpec(ctx);
     }
 
+    /**
+     * Get the function declaration
+     * @param ctx function statment
+     * @return object
+     */
     @Override
     public Object visitMethodDecl(MethodDeclContext ctx) {
         String contrName =ctx.receiver().type().getText().replace("*", "");
         Contract contr = contracts.get(contrName);
         Function func = new Function();
         String funcName = ctx.IDENTIFIER().getText();
+        // Only record the function that name's first letter is Capital letter
         if(!Character.isUpperCase(funcName.charAt(0))){
             return super.visitMethodDecl(ctx);
         }
         func.name = funcName;
 
         if(ctx.function() != null){
+            // get inputs type
             if(ctx.function().signature().parameters().parameterList() != null) {
                 for (ParameterDeclContext par : ctx.function().signature().parameters().parameterList().parameterDecl()) {
                     Parameter parameter = new Parameter();
@@ -76,6 +90,7 @@ public class GoVistor extends GolangBaseVisitor{
                 }
             }
 
+            //get return type
             if(ctx.function().signature().result().parameters()!= null) {
                 for (ParameterDeclContext par : ctx.function().signature().result().parameters().parameterList().parameterDecl()) {
                     Parameter parameter = new Parameter();
@@ -95,8 +110,13 @@ public class GoVistor extends GolangBaseVisitor{
         return super.visitMethodDecl(ctx);
     }
 
+    /**
+     * mapping the type to our defined type
+     * @param typename input type
+     * @return self defined type
+     */
     private Type findType(String typename) {
-        // may be need change?
+        // convert the type to basic type
         typename = typename.replace("*","");
         typename = typename.replace("[]byte","address");
         typename = typename.replace("math.Uint256","uint");
@@ -106,6 +126,7 @@ public class GoVistor extends GolangBaseVisitor{
             return types.get(typename);
         }
         Type t = new Type();
+        // find the mapping type
         if (typename.contains("map") && typename.contains("[")) {
             typename = typename.replace("string","address");
             Mapping mapping = new Mapping();
@@ -126,7 +147,9 @@ public class GoVistor extends GolangBaseVisitor{
             mapping.name = tmpName.toString();
             t = mapping;
 
-        } else {
+        }
+        // find array type
+        else {
             if (typename.contains("[") && typename.contains("]")) {
                 Array arr = new Array();
                 arr.name = typename;
@@ -139,7 +162,6 @@ public class GoVistor extends GolangBaseVisitor{
                 return arr;
 
             } else {
-                //Type t = new Type();
                 t.name = typename;
                 types.put(typename,t);
             }
@@ -147,6 +169,11 @@ public class GoVistor extends GolangBaseVisitor{
         return t;
     }
 
+    /**
+     * find the index
+     * @param name type
+     * @return the index of A in situation [ A,B]
+     */
     private int findIndex(String name){
         int index = name.indexOf("[");
         int count = 1;

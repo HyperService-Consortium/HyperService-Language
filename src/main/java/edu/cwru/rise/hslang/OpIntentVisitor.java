@@ -9,8 +9,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-import edu.cwru.rise.golang.GoParser;
-import edu.cwru.rise.golang.GoVistor;
+import edu.cwru.rise.golang.GoOpIntentParser;
+import edu.cwru.rise.golang.GoOpIntentVisitor;
 import edu.cwru.rise.hslang.parser.HSlangBaseVisitor;
 import edu.cwru.rise.hslang.parser.HSlangParser;
 import edu.cwru.rise.hslang.structure.Contract;
@@ -24,41 +24,41 @@ import edu.cwru.rise.hslang.structure.Payment;
 import edu.cwru.rise.hslang.structure.Sources;
 import edu.cwru.rise.hslang.structure.Type;
 import edu.cwru.rise.hslang.structure.Value;
-import edu.cwru.rise.solidity.SolidityTypeAnalyzer;
-import edu.cwru.rise.solidity.SolidityVisitor;
-import edu.cwru.rise.vyper.VPParser;
-import edu.cwru.rise.vyper.VPVistor;
+import edu.cwru.rise.solidity.SolOpIntentParser;
+import edu.cwru.rise.solidity.SolOpIntentVisitor;
+import edu.cwru.rise.vyper.VPOpIntentParser;
+import edu.cwru.rise.vyper.VPOpIntentVisitor;
 
 
 public class OpIntentVisitor extends HSlangBaseVisitor<String> {
 
-    private SolidityTypeAnalyzer solidityParser;
-    private VPParser vyperParser;
-    private GoParser goParser;
+    private SolOpIntentParser solidityParser;
+    private VPOpIntentParser vyperParser;
+    private GoOpIntentParser goParser;
 
-    private Map<String, Contract> contracts;
-    private Map<String, Type> contTypes;
-    private Map<String, HashMap<String,String>> chainAccount;
-    private Map<String, String> defiVar, defiVrAddr;
-    private Map<Integer, List<Integer>> adjList;
+    private Map<String, Contract> contracts; //Store imported contracts
+    private Map<String, Type> contTypes;//Store Type
+    private Map<String, HashMap<String,String>> chainAccount;// chainId / name & address
+    private Map<String, String> defiVar, defiVrAddr; //defiVar: name/ chainID; defiVrAddr: name / address
+    private Map<Integer, List<Integer>> adjList;// dependencies
     private int[] inDegree;
-    public Map<String, Integer> setNum;
-    public Set<String> opSet, visited;
+    public Map<String, Integer> setNum; // name / order
+    public Set<String> opSet, visited;// opSet:store operations
     public StringBuffer output, res;
     public int numOp;
 
 
     public OpIntentVisitor(){
-        this.solidityParser = new SolidityTypeAnalyzer();
-        this.vyperParser = new VPParser();
-        this.goParser = new GoParser();
+        this.solidityParser = new SolOpIntentParser();
+        this.vyperParser = new VPOpIntentParser();
+        this.goParser = new GoOpIntentParser();
         this.contracts = new HashMap<>();
         this.contTypes = new HashMap<>();
 
-        this.chainAccount = new HashMap<>(); // chainID / id address
-        this.defiVar = new HashMap<>();  //id chainID
-        this.defiVrAddr = new HashMap<>(); // id / address
-        this.opSet = new HashSet<>(); // store operation
+        this.chainAccount = new HashMap<>();
+        this.defiVar = new HashMap<>();
+        this.defiVrAddr = new HashMap<>();
+        this.opSet = new HashSet<>();
 
         this.output = new StringBuffer("[\n");
         this.res = new StringBuffer("\"dependencies\":[");
@@ -68,6 +68,84 @@ public class OpIntentVisitor extends HSlangBaseVisitor<String> {
         this.inDegree = new int[1];
         this.visited = new HashSet<>();
     }
+
+
+    /**
+     * Get import contract information
+     * @param ctx import statment
+     * @return string
+     */
+    @Override
+    public String visitImportDecl(HSlangParser.ImportDeclContext ctx) {
+        //long start = System.currentTimeMillis();
+        String contractName = ctx.importSpec().getText(); //get import contract name
+        //System.out.print(contractName);
+        contractName = contractName.replace("\"",""); // remove the " "
+
+        if(contractName.contains(".sol")) {
+            SolOpIntentVisitor visitor = solidityParser.sol(contractName); // invoke solidity parse to parse the contract file
+
+            contracts.putAll(visitor.contracts);
+            contTypes.putAll(visitor.types);
+        }
+        if(contractName.contains(".vy")) {
+            VPOpIntentVisitor visitor = vyperParser.vy(contractName);
+            //tmp = System.currentTimeMillis();
+            contracts.putAll(visitor.contracts);
+            contTypes.putAll(visitor.types);
+        }
+        if(contractName.contains(".go")){
+            GoOpIntentVisitor vistor = goParser.go(contractName);
+            //tmp = System.currentTimeMillis();
+            contracts.putAll(vistor.contracts);
+            contTypes.putAll(vistor.types);
+        }
+        /*
+        long tmp = System.currentTimeMillis();
+        long lexerTime = tmp-start;
+        System.out.println("import " + contractName + " costs: " + lexerTime);
+        */
+        return super.visitImportDecl(ctx);
+    }
+
+    /**
+     * check the contract is validation and get contract information
+     * @param ctx Contract statement
+     * @return string
+     */
+    @Override
+    public String visitContractSpc(HSlangParser.ContractSpcContext ctx) {
+        String addr = ctx.contractAddr().contract.getText();
+        try {
+            if (!contracts.containsKey(addr)) {  // whether the contract is been import
+                throw new HSLParsingException("the contract " + addr + " is not imported");
+            }
+
+            Contract newContra = (Contract) contracts.get(addr).clone(); // shallow copy
+            String contractName = ctx.id.getText();
+            newContra.name = contractName;
+
+            if (contracts.get(contractName) == null) {  // whether the variable name is been used
+                contracts.put(contractName, newContra);
+            } else {
+                throw new HSLParsingException("the contract's name \"" + contractName + "\" is used");
+            }
+
+            defiVar.put(contractName, ctx.chain.getText());
+            defiVrAddr.put(contractName, ctx.contractAddr().address.getText());
+        }catch (Exception e) {
+            System.err.println("Contract exception: " + e);
+            e.printStackTrace();
+        }
+
+        return super.visitContractSpc(ctx);
+    }
+
+    /**
+     * check whether payment statement is correct defined and convert it into json string
+     * @param ctx payment statement
+     * @return string
+     */
     @Override
     public String visitPaymentSpec(HSlangParser.PaymentSpecContext ctx) {
         String opName = ctx.opname.getText();
@@ -78,16 +156,17 @@ public class OpIntentVisitor extends HSlangBaseVisitor<String> {
             src.user_name = srctmp;
             String dstmp = ctx.toacct.getText();
             dst.user_name = dstmp;
+            // source account is not exist
             if(defiVar.get(src.user_name) == null){
                 throw new HSLParsingException("src " + srctmp + " is not defined");
             }
+            // receiver account is not exist
             if(defiVar.get(dstmp)== null){
                 throw new HSLParsingException("dst " + dstmp + " is not defined");
             }
             src.domain = defiVar.get(srctmp);
-
-
             dst.domain = defiVar.get(dstmp);
+
             String amount = ctx.amt.getText();
             String unit = ctx.unit.getText().replace("\"","");
             String newuint = ctx.newuint.getText().replace("\"","");
@@ -111,12 +190,18 @@ public class OpIntentVisitor extends HSlangBaseVisitor<String> {
         return super.visitPaymentSpec(ctx);
     }
 
+    /**
+     * check whether the contract invocation statement is correct and convert statement into json string
+     * @param ctx Contract Invocation statement
+     * @return String
+     */
     @Override
     public String visitContractInvocationSpec(HSlangParser.ContractInvocationSpecContext ctx){
         String opName = ctx.opname.getText();
         try {
             String invoker = ctx.acct.getText();  // account id
 
+            // account is not exist
             if (defiVrAddr.get(invoker) == null) {
                 throw new HSLParsingException(invoker + " is not exist");
             }
@@ -124,6 +209,7 @@ public class OpIntentVisitor extends HSlangBaseVisitor<String> {
             String contractName = ctx.recv.getText();
             Contract tmp = contracts.get(contractName);
 
+            // contract is not exist
             if (tmp == null) {
                 throw new HSLParsingException("the contract " + contractName + " is not defined");
             }
@@ -132,7 +218,8 @@ public class OpIntentVisitor extends HSlangBaseVisitor<String> {
             boolean flag = true;
             String funcName = ctx.method.getText();
             Function res = new Function();
-            for (Function f : funcs) {  // find whether the function is defined in the contract
+            for (Function f : funcs) {
+                // find whether the function is defined in the contract
                 // if the function exist, set the flag as false
                 if (f.name.equals(funcName)) {
                     flag = false;
@@ -142,7 +229,8 @@ public class OpIntentVisitor extends HSlangBaseVisitor<String> {
             }
 
             if (flag) {
-                throw new HSLParsingException("the function " + funcName + " is not defined in the " + contractName + " contract");
+                throw new HSLParsingException("the function " + funcName
+                        + " is not defined in the " + contractName + " contract");
             }
 
             String name = ctx.opname.getText();
@@ -153,6 +241,7 @@ public class OpIntentVisitor extends HSlangBaseVisitor<String> {
             contract.address = defiVrAddr.get(contract_code).replace("\"", "");
             List<Inputs> in = new ArrayList<>();
             if (res.args.isEmpty()) {
+                // function has none inputs
                 if (ctx.args != null) {
                     throw new HSLParsingException("Invaid inputs");
                 }
@@ -163,14 +252,15 @@ public class OpIntentVisitor extends HSlangBaseVisitor<String> {
                 setNum.put(opName, numOp++);
                 inDegree = new int[numOp];
             } else {
+                //function has multi inputs
                 List<Parameter> parameters = res.args;
                 String[] args = ctx.args.getText().split(",");
                 if (parameters.size() != args.length) {
                     throw new HSLParsingException("Invaid inputs");
                 }
 
+                //check the input is matching the function's requirment
                 for (int i = 0; i < args.length; i++) {
-
                     String tmpArg = args[i];
                     String requireType = parameters.get(i).type.name;
                     Value value = new Value();
@@ -201,16 +291,21 @@ public class OpIntentVisitor extends HSlangBaseVisitor<String> {
         return super.visitContractInvocationSpec(ctx);
     }
 
-
-    private String Typecheck(String input, Value value){         // may need to add more pattern
-
+    /**
+     * Baisc Type check, will return the input's type
+     * @param input input statement
+     * @param value input information
+     * @return type
+     */
+    private String Typecheck(String input, Value value){
         Pattern uintType = Pattern.compile("[0-9]*(\\.?)[0-9]*");
-
+        // input is number
         if (uintType.matcher(input).matches()) {
             value.constant = input;
             return "uint";
         }
 
+        // input is the reference
         if(input.contains(".")) {
             String[] tmp = input.split("\\.");
             Contract contract = contracts.get(tmp[0]);
@@ -228,6 +323,7 @@ public class OpIntentVisitor extends HSlangBaseVisitor<String> {
             return null;
         }
 
+        // input is boolean
         if(input.equals("true") || input.equals("false")){
             value.constant = input;
             return "boolean";
@@ -236,44 +332,23 @@ public class OpIntentVisitor extends HSlangBaseVisitor<String> {
         return null;
     }
 
-    @Override
-    public String visitContractSpc(HSlangParser.ContractSpcContext ctx) {
-        String tmp = ctx.contractAddr().contract.getText();
-        try {
-            if (!contracts.containsKey(tmp)) {  // whether the contract is been import
-                throw new HSLParsingException("the contract " + tmp + " is not imported");
-            }
-
-            Contract newContra = (Contract) contracts.get(tmp).clone(); // shallow copy
-            String contractName = ctx.id.getText();
-            newContra.name = contractName;
-
-            if (contracts.get(contractName) == null) {  // whether the variable name is been used
-                contracts.put(contractName, newContra);
-            } else {
-                throw new HSLParsingException("the contract's name \"" + contractName + "\" is used");
-            }
-
-            defiVar.put(contractName, ctx.chain.getText());
-            defiVrAddr.put(contractName, ctx.contractAddr().address.getText());
-        }catch (Exception e) {
-            System.err.println("Contract exception: " + e);
-            e.printStackTrace();
-        }
-
-        return super.visitContractSpc(ctx);
-    }
-
+    /**
+     * check whether the account statement is correct and convert statement into json string
+     * @param ctx account statement
+     * @return String
+     */
     @Override
     public String visitAccountSpc(HSlangParser.AccountSpcContext ctx) {
         String chainId = ctx.chain.getText(); //get chain id
-        String id = ctx.id.getText();
-        String addr = ctx.address.getText();
+        String id = ctx.id.getText(); // get name
+        String addr = ctx.address.getText(); // get address
         HashMap<String,String> tmp = chainAccount.getOrDefault(chainId,new HashMap<String, String>());
         try {
+            // account name is already taken
             if(defiVar.get(id)!= null){
                 throw new HSLParsingException("the account name " + id  +" is already taken");
             }
+            // account address is been used
             if(tmp.containsValue(addr)){
                 throw new HSLParsingException("the address is already taken");
             }
@@ -287,39 +362,11 @@ public class OpIntentVisitor extends HSlangBaseVisitor<String> {
         return super.visitAccountSpc(ctx);
     }
 
-    @Override
-    public String visitImportDecl(HSlangParser.ImportDeclContext ctx) {
-        //long start = System.currentTimeMillis();
-        String contractName = ctx.importSpec().getText(); //get import contract name
-        //System.out.print(contractName);
-        contractName = contractName.replace("\"",""); // remove the " "
-
-        if(contractName.contains(".sol")) {
-            SolidityVisitor visitor = solidityParser.sol(contractName); // invoke solidity parse to parse the contract file
-
-            contracts.putAll(visitor.contracts);
-            contTypes.putAll(visitor.types);
-        }
-        if(contractName.contains(".vy")) {
-            VPVistor visitor = vyperParser.vy(contractName);
-            //tmp = System.currentTimeMillis();
-            contracts.putAll(visitor.contracts);
-            contTypes.putAll(visitor.types);
-        }
-        if(contractName.contains(".go")){
-            GoVistor vistor = goParser.go(contractName);
-            //tmp = System.currentTimeMillis();
-            contracts.putAll(vistor.contracts);
-            contTypes.putAll(vistor.types);
-        }
-        /*
-        long tmp = System.currentTimeMillis();
-        long lexerTime = tmp-start;
-        System.out.println("import " + contractName + " costs: " + lexerTime);
-        */
-        return super.visitImportDecl(ctx);
-    }
-
+    /**
+     * Get dependencies and check whether it is correct
+     * @param ctx dependencies statement
+     * @return string
+     */
     @Override
     public String visitDepSpec(HSlangParser.DepSpecContext ctx) {
         String left = ctx.left.getText();
@@ -328,6 +375,7 @@ public class OpIntentVisitor extends HSlangBaseVisitor<String> {
         String dep = ctx.dep.getText();
 
         try {
+            // did not point out dependencies relation
             if(!dep.equals("before") && !dep.equals("after")){
                 throw new HSLParsingException("Wrong dependencies");
             }
@@ -338,15 +386,17 @@ public class OpIntentVisitor extends HSlangBaseVisitor<String> {
             visited.add(left);
             int preNode = setNum.get(left);
             for(String r : rights) {
+                // loop
                 if(r.equals(left)){
                     throw new HSLParsingException("Operation " + r + " cannot point to itself");
                 }
-
+                // operation is not exist
                 if (!opSet.contains(r)) {
                     throw new HSLParsingException(r + " is not exist");
                 }
                 visited.add(r);
                 int node = setNum.get(r);
+                // operation a before b, add the relation to the map
                 if(dep.equals("before")) {
                     if(adjList.containsKey(preNode)) {
                         List<Integer> edges = adjList.get(preNode);
@@ -357,6 +407,7 @@ public class OpIntentVisitor extends HSlangBaseVisitor<String> {
                     adjList.computeIfAbsent(preNode, k -> new LinkedList<>()).add(node);
                     inDegree[node]++;
                 }
+                // operation a after b
                 else{
                     if(adjList.containsKey(node)) {
                         List<Integer> edges = adjList.get(node);
@@ -371,7 +422,6 @@ public class OpIntentVisitor extends HSlangBaseVisitor<String> {
 
             }
             int[] tmp = inDegree.clone();
-           // boolean flg = checklop(tmp);
             if(!checklop(tmp)){
                 throw new HSLParsingException("Wrong dependencies");
             }
@@ -387,6 +437,11 @@ public class OpIntentVisitor extends HSlangBaseVisitor<String> {
         return super.visitDepSpec(ctx);
     }
 
+    /**
+     * check the operation name is vaild
+     * @param opName operation name
+     * @throws HSLParsingException
+     */
     private void opCheck(String opName) throws HSLParsingException{
 
         if(!opSet.add(opName)) {
@@ -394,6 +449,11 @@ public class OpIntentVisitor extends HSlangBaseVisitor<String> {
         }
     }
 
+    /**
+     * check whether there exist the situation that a-> b, b-> a
+     * @param tmps operations relation
+     * @return whether there is a loop
+     */
     private boolean checklop(int[] tmps){
         int count = 0;
         int zeroDegree = -1;

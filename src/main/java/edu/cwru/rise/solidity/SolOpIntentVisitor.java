@@ -10,17 +10,19 @@ import edu.cwru.rise.hslang.structure.Modifier;
 import edu.cwru.rise.solidity.parser.SolidityBaseVisitor;
 import edu.cwru.rise.solidity.parser.SolidityParser;
 
-public class SolidityVisitor extends SolidityBaseVisitor {
+public class SolOpIntentVisitor extends SolidityBaseVisitor {
 
-    public HashMap<String, Type> types = new HashMap<>();
-    public HashMap<String, Contract> contracts = new HashMap<>();
+    public HashMap<String, Type> types = new HashMap<>(); // store contracts' type
+    public HashMap<String, Contract> contracts = new HashMap<>(); // store all imported contracts
     Contract curr;
-    int i = 0;
-    public Contract getContract() {
-        return curr;
-    }
-    HashMap<String, List<Field>> structs = new HashMap<>();
+    int i = 0; // record the position of a field
+    HashMap<String, List<Field>> structs = new HashMap<>(); // store structs
 
+    /**
+     * find the contract and store contract's name
+     * @param ctx contract declaration
+     * @return object
+     */
     @Override
     public Object visitContractDefinition(SolidityParser.ContractDefinitionContext ctx) {
         Contract contract = new Contract();
@@ -31,51 +33,11 @@ public class SolidityVisitor extends SolidityBaseVisitor {
         return super.visitContractDefinition(ctx);
     }
 
-    Type findType(String typename) {
-        if(typename.equals("int") && !typename.contains("uint")){
-            typename = typename.replaceAll("int", "uint");
-        }
-        //typename = typename.replaceAll("uint", "integer");
-        typename = typename.replaceAll("addresspayable", "address");
-        if (types.containsKey(typename)) {
-            return types.get(typename);
-        }
-        Type t = new Type();
-        if (typename.contains("mapping")) {
-            Mapping mapping = new Mapping();
-
-            String fromtypename = typename.substring(typename.indexOf("(") + 1, typename.indexOf("=>")).trim();
-            String totypename = typename.substring(typename.indexOf("=>")+2, typename.lastIndexOf(")")).trim();
-
-            Type keytype = findType(fromtypename);
-            Type valuetype = findType(totypename);
-
-            mapping.name = typename;
-            mapping.keytype = keytype;
-            mapping.valuetype = valuetype;
-
-            t = mapping;
-
-        } else {
-            if (typename.contains("[") && typename.contains("]")) {
-                Array a = new Array();
-                Type elemtype = findType(typename.substring(0, typename.indexOf("[")));
-                a.elemType = elemtype;
-                String size = typename.substring(typename.indexOf("[") + 1, typename.indexOf("]")).trim();
-                if (size.length() != 0) {
-                    a.length = Integer.parseInt(size);
-                }
-                return elemtype;
-
-            } else {
-                //Type t = new Type();
-                t.name = typename;
-                types.put(typename,t);
-            }
-        }
-        return t;
-    }
-
+    /**
+     * find the struct and store it into the map
+     * @param ctx struct declaration
+     * @return object
+     */
     @Override
     public Object visitStructDefinition(SolidityParser.StructDefinitionContext ctx) {
         Struct t = new Struct();
@@ -94,7 +56,11 @@ public class SolidityVisitor extends SolidityBaseVisitor {
     }
 
 
-
+    /**
+     * find the state variable and store it into the map
+     * @param ctx State variable declaration
+     * @return object
+     */
     @Override
     public Object visitStateVariableDeclaration(SolidityParser.StateVariableDeclarationContext ctx) {
         String typename = ctx.typeName().getText();
@@ -102,17 +68,21 @@ public class SolidityVisitor extends SolidityBaseVisitor {
         Field f = new Field();
         f.name = ctx.identifier().getText();
         f.type = t;
-
         f.pos = posLocation(typename);
-        //System.out.println("fields: " + f.type + " ouput " +f.name);
         curr.fields.add(f);
 
         return super.visitStateVariableDeclaration(ctx);
     }
 
+    /**
+     * find the storage posistion of the variable
+     * @param typename variable
+     * @return the storage position of the variable
+     */
     private String posLocation(String typename){
         String tmp = Integer.toString(i);
         StringBuffer res = new StringBuffer(tmp);
+        // array variable
         if(typename.contains("[") && typename.contains("]")){
             String size = typename.substring(typename.indexOf("[") + 1, typename.indexOf("]")).trim();
             if (size.length() != 0) {
@@ -165,7 +135,6 @@ public class SolidityVisitor extends SolidityBaseVisitor {
             }
         }
 
-
         if (ctx.modifierList().PublicKeyword().size() > 0) {
             f.modifiers.add(Modifier.PUBLIC);
         }
@@ -196,8 +165,67 @@ public class SolidityVisitor extends SolidityBaseVisitor {
             }
         }
 
-
         curr.functions.add(f);
         return super.visitFunctionDefinition(ctx);
+    }
+
+    /**
+     * mapping the type to our defined type
+     * @param typename input type
+     * @return self defined type
+     */
+    private Type findType(String typename) {
+        if(typename.equals("int") && !typename.contains("uint")){
+            typename = typename.replaceAll("int", "uint");
+        }
+        typename = typename.replaceAll("addresspayable", "address");
+
+        if (types.containsKey(typename)) {
+            return types.get(typename);
+        }
+        Type t = new Type();
+        // map type
+        if (typename.contains("mapping")) {
+            Mapping mapping = new Mapping();
+
+            String fromtypename = typename.substring(typename.indexOf("(") + 1, typename.indexOf("=>")).trim();
+            String totypename = typename.substring(typename.indexOf("=>")+2, typename.lastIndexOf(")")).trim();
+
+            Type keytype = findType(fromtypename);
+            Type valuetype = findType(totypename);
+
+            mapping.name = typename;
+            mapping.keytype = keytype;
+            mapping.valuetype = valuetype;
+
+            t = mapping;
+
+        }
+        // array type
+        else {
+            if (typename.contains("[") && typename.contains("]")) {
+                Array a = new Array();
+                Type elemtype = findType(typename.substring(0, typename.indexOf("[")));
+                a.elemType = elemtype;
+                String size = typename.substring(typename.indexOf("[") + 1, typename.indexOf("]")).trim();
+                if (size.length() != 0) {
+                    a.length = Integer.parseInt(size);
+                }
+                return elemtype;
+
+            } else {
+                t.name = typename;
+                types.put(typename,t);
+            }
+        }
+        return t;
+    }
+
+    /**
+     * Get current contract
+     * @return contract
+     */
+    public Contract getContract() {
+        return curr;
     }
 }

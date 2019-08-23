@@ -6,11 +6,17 @@ import java.util.List;
 import java.util.Set;
 
 public class Function {
+    // args stores input arguments
     public List<Parameter> args = new ArrayList<>();
     public List<Parameter> returns = new ArrayList<>();
     public String name;
+    // modifiers stores information like public, private, etc
     public Set<Modifier> modifiers = new HashSet<>();
 
+    /**
+     * Override toString function
+     * @return modifiers + function + return
+     */
     @Override
     public String toString() {
         StringBuffer sb = new StringBuffer();

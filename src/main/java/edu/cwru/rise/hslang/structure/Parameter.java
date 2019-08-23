@@ -6,6 +6,11 @@ public class Parameter {
     public Type type;
     public String name;
 
+    /**
+     * override equals function, compare with type and name
+     * @param o An object
+     * @return whether parameter is equal to the input object
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -15,9 +20,12 @@ public class Parameter {
                 Objects.equals(name, parameter.name);
     }
 
+    /**
+     * Override hashCode funtion to get the hash code
+     * @return hash code
+     */
     @Override
     public int hashCode() {
-
         return Objects.hash(type, name);
     }
 }

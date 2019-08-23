@@ -6,6 +6,10 @@ import java.util.List;
 public class Struct extends Type {
     public List<Field> fields = new ArrayList<>();
 
+    /**
+     * Override toString function
+     * @return name + struct
+     */
     @Override
     public String toString() {
         StringBuffer sb = new StringBuffer(name + "(struct{");

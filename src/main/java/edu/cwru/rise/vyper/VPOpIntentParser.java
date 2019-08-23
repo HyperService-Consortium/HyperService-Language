@@ -1,4 +1,4 @@
-package edu.cwru.rise.golang;
+package edu.cwru.rise.vyper;
 
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.BailErrorStrategy;
@@ -12,73 +12,80 @@ import org.antlr.v4.runtime.atn.PredictionMode;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-import edu.cwru.rise.golang.parser.GolangLexer;
-import edu.cwru.rise.golang.parser.GolangParser;
 import edu.cwru.rise.hslang.structure.*;
-
+import edu.cwru.rise.vyper.parser.VyperLexer;
+import edu.cwru.rise.vyper.parser.VyperParser;
 
 /**
- * Created by {Jian Shi} on 2019/4/27.
+ * Created by {Jian Shi} on 2019/4/20.
  */
-public class GoParser {
+public class VPOpIntentParser {
+
     public static void main(String[] args) {
         try {
             // Create a scanner that reads from the input stream passed to us
-            String file = "contracts/DelegateAdmin/delegate.go";
+            String file = "Option_vy.vy";
+            String[] names = file.split("/|\\.");
+            int size = names.length-2;
             CharStream charStream = new ANTLRInputStream(new String(Files.readAllBytes(Paths.get(file))));
-            Lexer lexer = new GolangLexer(charStream);
-
+            Lexer lexer = new VyperLexer(charStream);
             CommonTokenStream tokens = new CommonTokenStream(lexer);
 
-            // Create a parser that reads from the scanner
-            GolangParser parser = new GolangParser(tokens);
+            VyperParser parser = new VyperParser(tokens);
             parser.addErrorListener(new DiagnosticErrorListener());
             parser.setErrorHandler(new BailErrorStrategy());
             parser.getInterpreter().setPredictionMode(PredictionMode.SLL);
 
             // start parsing at the compilationUnit rule
-            ParserRuleContext t = parser.sourceFile();
+            ParserRuleContext t = parser.sourceUnit();
             parser.setBuildParseTree(false);
-            //System.out.println("tree:" + t.toStringTree(parser));
-
-            GoVistor visitor = new GoVistor();
-            visitor.visit(t);
+            VPOpIntentVisitor vistor = new VPOpIntentVisitor();
+            vistor.visit(t);
+            vistor.curr.name = names[size];
+            vistor.contracts.put(names[size], vistor.curr);
             for (Contract c:
-                    visitor.contracts.values()) {
+                    vistor.contracts.values()) {
                 System.out.println(c);
             }
 
-        } catch (Exception e) {
+        }catch (Exception e) {
             System.err.println("parser exception: " + e);
             e.printStackTrace();   // so we can get stack trace
         }
     }
 
-    public GoVistor go(String fileName){
-        GoVistor visitor = new GoVistor();
+    public VPOpIntentVisitor vy(String fileName){
+        VPOpIntentVisitor vistor = new VPOpIntentVisitor();
         try {
             // Create a scanner that reads from the input stream passed to us
-            String file = fileName;
-            CharStream charStream = new ANTLRInputStream(new String(Files.readAllBytes(Paths.get(file))));
-            Lexer lexer = new GolangLexer(charStream);
-
+            String[] names = fileName.split("/|\\.");
+            int size = names.length-2;
+            CharStream charStream = new ANTLRInputStream(new String(Files.readAllBytes(Paths.get(fileName))));
+            Lexer lexer = new VyperLexer(charStream);
             CommonTokenStream tokens = new CommonTokenStream(lexer);
 
-            // Create a parser that reads from the scanner
-            GolangParser parser = new GolangParser(tokens);
+            VyperParser parser = new VyperParser(tokens);
             parser.addErrorListener(new DiagnosticErrorListener());
             parser.setErrorHandler(new BailErrorStrategy());
             parser.getInterpreter().setPredictionMode(PredictionMode.SLL);
 
             // start parsing at the compilationUnit rule
-            ParserRuleContext t = parser.sourceFile();
+            ParserRuleContext t = parser.sourceUnit();
             parser.setBuildParseTree(false);
+            vistor.curr.name = names[size];
+            vistor.contracts.put(names[size], vistor.curr);
+            vistor.visit(t);
 
-            visitor.visit(t);
-        } catch (Exception e) {
+            /*for (Contract c:
+                    vistor.contracts.values()) {
+                System.out.println(c);
+            }
+            */
+
+        }catch (Exception e) {
             System.err.println("parser exception: " + e);
             e.printStackTrace();   // so we can get stack trace
         }
-        return visitor;
+        return vistor;
     }
 }

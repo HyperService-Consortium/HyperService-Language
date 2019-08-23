@@ -6,6 +6,11 @@ public class Mapping extends Type {
     public Type keytype;
     public Type valuetype;
 
+    /**
+     * override equals function, compare with key type and value type
+     * @param o An object
+     * @return whether map entry is equal to the input object
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -16,9 +21,12 @@ public class Mapping extends Type {
                 Objects.equals(valuetype, mapping.valuetype);
     }
 
+    /**
+     * Override hashCode funtion to get the hash code
+     * @return hash code
+     */
     @Override
     public int hashCode() {
-
         return Objects.hash(super.hashCode(), keytype, valuetype);
     }
 }

@@ -17,6 +17,10 @@ public class Dependencies {
         this.dep = dep;
     }
 
+    /**
+     * convert the object to json
+     * @return A json string
+     */
     public String toJson() {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         return gson.toJson(this);

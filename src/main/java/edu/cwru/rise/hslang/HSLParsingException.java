@@ -1,7 +1,7 @@
 package edu.cwru.rise.hslang;
 
 /**
- * Created by {Jian Shi} on 2019/3/28.
+ * handle the exceptions the occur in the HSL
  */
 public class HSLParsingException extends Exception {
 

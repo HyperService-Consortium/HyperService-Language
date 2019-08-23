@@ -4,10 +4,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Contract implements Cloneable {
+    // contract's name
     public String name;
+    // contract's fields
     public List<Field> fields = new ArrayList<>();
+    // contract's function
     public List<Function> functions = new ArrayList<>();
 
+    /**
+     * Override clone funtion
+     * @return clone object
+     */
     @Override
     public Object clone() {
         Contract newContra = null;
@@ -19,6 +26,10 @@ public class Contract implements Cloneable {
         return newContra;
     }
 
+    /**
+     * Override toString function
+     * @return Contract name + fields + functions
+     */
     @Override
     public String toString() {
         StringBuffer sb = new StringBuffer("Contract " + name + "{ \n");
@@ -34,18 +45,12 @@ public class Contract implements Cloneable {
         return sb.toString();
     }
 
+    /**
+     * Get the contract's functions
+     * @return contract's functions
+     */
     public List<Function> getFunctions(){
         return this.functions;
     }
-    /*
-    public Object deepClone() throws IOException,ClassNotFoundException {
-        OutputStream output = new ByteArrayOutputStream();
-        ObjectOutputStream oo = new ObjectOutputStream(output);
-        oo.writeObject(this);
-
-        InputStream bi = new ByteArrayInputStream(((ByteArrayOutputStream) output).toByteArray());
-        ObjectInputStream oi = new ObjectInputStream(bi);
-        return (oi.readObject());
-    }*/
 
 }

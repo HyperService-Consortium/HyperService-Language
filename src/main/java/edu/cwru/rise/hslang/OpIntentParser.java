@@ -45,10 +45,12 @@ public class OpIntentParser {
 
             visitor.visit(t);
 
+            // Print dependencies
             String dep = visitor.res.toString();
             if(dep.equals("\"dependencies\":[")){
                 throw new HSLParsingException("Wrong dependencies");
             }
+
             if(visitor.visited.size() != visitor.setNum.size()){
                 throw new HSLParsingException("Incomplete dependencies");
             }

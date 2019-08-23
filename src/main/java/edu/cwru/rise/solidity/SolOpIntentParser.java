@@ -12,12 +12,12 @@ import org.antlr.v4.runtime.atn.PredictionMode;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-import edu.cwru.rise.hslang.structure.*;
+import edu.cwru.rise.hslang.structure.Contract;
 import edu.cwru.rise.solidity.parser.SolidityLexer;
 import edu.cwru.rise.solidity.parser.SolidityParser;
 
 
-public class SolidityTypeAnalyzer {
+public class SolOpIntentParser {
 
     public static void main(String[] args) {
         try {
@@ -43,7 +43,7 @@ public class SolidityTypeAnalyzer {
             parser.setBuildParseTree(false);
            // System.out.println("tree:" + t.toStringTree(parser));
 
-            SolidityVisitor visitor = new SolidityVisitor();
+            SolOpIntentVisitor visitor = new SolOpIntentVisitor();
             visitor.visit(t);
             for (Contract c:
                     visitor.contracts.values()) {
@@ -57,8 +57,8 @@ public class SolidityTypeAnalyzer {
         //tmp("sol/T2.sol");
     }
 
-    public SolidityVisitor sol(String file){
-        SolidityVisitor visitor = new SolidityVisitor();
+    public SolOpIntentVisitor sol(String file){
+        SolOpIntentVisitor visitor = new SolOpIntentVisitor();
         try {
             CharStream charStream = new ANTLRInputStream(new String(Files.readAllBytes(Paths.get(file))));
             Lexer lexer = new SolidityLexer(charStream);
@@ -113,7 +113,7 @@ public class SolidityTypeAnalyzer {
             String res = t.toStringTree(parser);
             System.out.println("tree:" + t.toStringTree(parser));
 
-            SolidityVisitor visitor = new SolidityVisitor();
+            SolOpIntentVisitor visitor = new SolOpIntentVisitor();
             visitor.visit(t);
             for (Contract c:
                     visitor.contracts.values()) {
