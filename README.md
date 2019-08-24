@@ -1,4 +1,4 @@
-# Hyper-Service-Language
+# HyperService-Language (HSL)
 A blockchain, as well as smart contracts (or dApps) executed on the blockchain, is often perceived as a state machine. We desire to preserve similar abstraction for developers when writing cross-chain dApps. Towards this end, HyperService proposes Unified State Model(USM), a blockchain-neutral and extensible model or language for describing state transitions across different blockchains.
 
 The Hyper-Service-Language is the high-level programming language to write cross-chain dApps under the modeling of USM.
