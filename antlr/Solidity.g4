@@ -164,7 +164,7 @@ statement
   | returnStatement
   | throwStatement
   | emitStatement
-  | simpleStatement ;
+  | simpleStatement;
 
 expressionStatement
   : expression ';' ;

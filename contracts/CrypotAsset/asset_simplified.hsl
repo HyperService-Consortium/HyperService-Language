@@ -14,3 +14,17 @@ op op2 call c1.deposit(10) using a1
 
 dep:
 op1 before op2
+
+
+import ("contracts/Finance/option.sol")
+
+account a1 = domain1::"0x7019fa779024c0a0eac1d8475733eefe10a49f3b" // account addr
+account a2 = domain2::"0x47a1cdb6594d6efed3a6b917f2fbaa2bbcf61a2e"
+
+contract c1 = domain2::Option_sol("414cef746cb05d46201ab6f28dc413380cffe998")  // contract addr
+
+op o1 call c1.updateStake(100) using a1
+op o2 payment c1.strikePrice "ether" from a1 to a2
+
+dep:
+o1 before o2

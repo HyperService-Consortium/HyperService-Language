@@ -1,4 +1,4 @@
-// Generated from /Users/Jian/Downloads/Hyper-Service-Language/antlr/HSlang.g4 by ANTLR 4.7
+// Generated from /Users/Jian/Downloads/HSL/antlr/HSlang.g4 by ANTLR 4.7
 
 package edu.cwru.rise.hslang.parser;
 
@@ -90,6 +90,116 @@ public interface HSlangListener extends ParseTreeListener {
 	 */
 	void exitOpSpec(HSlangParser.OpSpecContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link HSlangParser#ifSpec}.
+	 * @param ctx the parse tree
+	 */
+	void enterIfSpec(HSlangParser.IfSpecContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link HSlangParser#ifSpec}.
+	 * @param ctx the parse tree
+	 */
+	void exitIfSpec(HSlangParser.IfSpecContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link HSlangParser#ifStatemnt}.
+	 * @param ctx the parse tree
+	 */
+	void enterIfStatemnt(HSlangParser.IfStatemntContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link HSlangParser#ifStatemnt}.
+	 * @param ctx the parse tree
+	 */
+	void exitIfStatemnt(HSlangParser.IfStatemntContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link HSlangParser#elseStatement}.
+	 * @param ctx the parse tree
+	 */
+	void enterElseStatement(HSlangParser.ElseStatementContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link HSlangParser#elseStatement}.
+	 * @param ctx the parse tree
+	 */
+	void exitElseStatement(HSlangParser.ElseStatementContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link HSlangParser#blockVarSpec}.
+	 * @param ctx the parse tree
+	 */
+	void enterBlockVarSpec(HSlangParser.BlockVarSpecContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link HSlangParser#blockVarSpec}.
+	 * @param ctx the parse tree
+	 */
+	void exitBlockVarSpec(HSlangParser.BlockVarSpecContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link HSlangParser#ifaccountSpc}.
+	 * @param ctx the parse tree
+	 */
+	void enterIfaccountSpc(HSlangParser.IfaccountSpcContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link HSlangParser#ifaccountSpc}.
+	 * @param ctx the parse tree
+	 */
+	void exitIfaccountSpc(HSlangParser.IfaccountSpcContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link HSlangParser#ifcontractSpc}.
+	 * @param ctx the parse tree
+	 */
+	void enterIfcontractSpc(HSlangParser.IfcontractSpcContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link HSlangParser#ifcontractSpc}.
+	 * @param ctx the parse tree
+	 */
+	void exitIfcontractSpc(HSlangParser.IfcontractSpcContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link HSlangParser#blockOpSpec}.
+	 * @param ctx the parse tree
+	 */
+	void enterBlockOpSpec(HSlangParser.BlockOpSpecContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link HSlangParser#blockOpSpec}.
+	 * @param ctx the parse tree
+	 */
+	void exitBlockOpSpec(HSlangParser.BlockOpSpecContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link HSlangParser#loopSpec}.
+	 * @param ctx the parse tree
+	 */
+	void enterLoopSpec(HSlangParser.LoopSpecContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link HSlangParser#loopSpec}.
+	 * @param ctx the parse tree
+	 */
+	void exitLoopSpec(HSlangParser.LoopSpecContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link HSlangParser#condExpression}.
+	 * @param ctx the parse tree
+	 */
+	void enterCondExpression(HSlangParser.CondExpressionContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link HSlangParser#condExpression}.
+	 * @param ctx the parse tree
+	 */
+	void exitCondExpression(HSlangParser.CondExpressionContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link HSlangParser#rEL_OP}.
+	 * @param ctx the parse tree
+	 */
+	void enterREL_OP(HSlangParser.REL_OPContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link HSlangParser#rEL_OP}.
+	 * @param ctx the parse tree
+	 */
+	void exitREL_OP(HSlangParser.REL_OPContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link HSlangParser#compareUnit}.
+	 * @param ctx the parse tree
+	 */
+	void enterCompareUnit(HSlangParser.CompareUnitContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link HSlangParser#compareUnit}.
+	 * @param ctx the parse tree
+	 */
+	void exitCompareUnit(HSlangParser.CompareUnitContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link HSlangParser#numericallit}.
 	 * @param ctx the parse tree
 	 */
@@ -119,6 +229,36 @@ public interface HSlangListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitContractInvocationSpec(HSlangParser.ContractInvocationSpecContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link HSlangParser#ifpaymentSpec}.
+	 * @param ctx the parse tree
+	 */
+	void enterIfpaymentSpec(HSlangParser.IfpaymentSpecContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link HSlangParser#ifpaymentSpec}.
+	 * @param ctx the parse tree
+	 */
+	void exitIfpaymentSpec(HSlangParser.IfpaymentSpecContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link HSlangParser#ifcontractInvocationSpec}.
+	 * @param ctx the parse tree
+	 */
+	void enterIfcontractInvocationSpec(HSlangParser.IfcontractInvocationSpecContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link HSlangParser#ifcontractInvocationSpec}.
+	 * @param ctx the parse tree
+	 */
+	void exitIfcontractInvocationSpec(HSlangParser.IfcontractInvocationSpecContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link HSlangParser#stateField}.
+	 * @param ctx the parse tree
+	 */
+	void enterStateField(HSlangParser.StateFieldContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link HSlangParser#stateField}.
+	 * @param ctx the parse tree
+	 */
+	void exitStateField(HSlangParser.StateFieldContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link HSlangParser#arg}.
 	 * @param ctx the parse tree

@@ -1,4 +1,4 @@
-// Generated from /Users/Jian/Downloads/Hyper-Service-Language/antlr/HSlang.g4 by ANTLR 4.7
+// Generated from /Users/Jian/Downloads/HSL/antlr/HSlang.g4 by ANTLR 4.7
 
 package edu.cwru.rise.hslang.parser;
 
@@ -61,6 +61,72 @@ public interface HSlangVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitOpSpec(HSlangParser.OpSpecContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link HSlangParser#ifSpec}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitIfSpec(HSlangParser.IfSpecContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link HSlangParser#ifStatemnt}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitIfStatemnt(HSlangParser.IfStatemntContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link HSlangParser#elseStatement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitElseStatement(HSlangParser.ElseStatementContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link HSlangParser#blockVarSpec}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitBlockVarSpec(HSlangParser.BlockVarSpecContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link HSlangParser#ifaccountSpc}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitIfaccountSpc(HSlangParser.IfaccountSpcContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link HSlangParser#ifcontractSpc}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitIfcontractSpc(HSlangParser.IfcontractSpcContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link HSlangParser#blockOpSpec}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitBlockOpSpec(HSlangParser.BlockOpSpecContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link HSlangParser#loopSpec}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitLoopSpec(HSlangParser.LoopSpecContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link HSlangParser#condExpression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitCondExpression(HSlangParser.CondExpressionContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link HSlangParser#rEL_OP}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitREL_OP(HSlangParser.REL_OPContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link HSlangParser#compareUnit}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitCompareUnit(HSlangParser.CompareUnitContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link HSlangParser#numericallit}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -78,6 +144,24 @@ public interface HSlangVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitContractInvocationSpec(HSlangParser.ContractInvocationSpecContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link HSlangParser#ifpaymentSpec}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitIfpaymentSpec(HSlangParser.IfpaymentSpecContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link HSlangParser#ifcontractInvocationSpec}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitIfcontractInvocationSpec(HSlangParser.IfcontractInvocationSpecContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link HSlangParser#stateField}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitStateField(HSlangParser.StateFieldContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link HSlangParser#arg}.
 	 * @param ctx the parse tree

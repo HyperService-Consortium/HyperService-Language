@@ -162,7 +162,7 @@ package edu.cwru.rise.hslang.parser;
 //    : packageClause eos ( importDecl eos )* ( topLevelDecl eos )*
 //    ;
 sourceFile
-    : (importDecl eos )*(varSpec eos) * (opSpec eos) * (depSection eos)*
+    : (importDecl eos )*(varSpec eos) * (opSpec eos) * (depSection eos)?
     ;
 
 //varSpec
@@ -194,21 +194,81 @@ contractAddr
     ;
 
 opSpec
-    : paymentSpec | contractInvocationSpec
+    : ifSpec | loopSpec | paymentSpec | contractInvocationSpec
     ;
+
+ifSpec
+    : ifStatemnt (elseStatement)*
+    ;
+
+ifStatemnt
+    :'if(' condExpression '){' (ifSpec eos)* (blockVarSpec eos)* (blockOpSpec eos) * '}'
+    ;
+elseStatement
+    :'else' '{' (ifSpec eos)* (blockVarSpec eos)* (blockOpSpec eos) * '}'
+    ;
+
+blockVarSpec
+    : ifaccountSpc | ifcontractSpc
+    ;
+
+ifaccountSpc
+    : 'account' id=IDENTIFIER '='  chain=IDENTIFIER '::' address=STRING_LIT
+    ;
+
+ifcontractSpc
+    : 'contract' id=IDENTIFIER '='  chain=IDENTIFIER '::' contractAddr
+    ;
+
+blockOpSpec
+    : ifpaymentSpec | ifcontractInvocationSpec
+    ;
+loopSpec
+    : 'loop(' times=numericallit '){' (blockVarSpec eos)* (blockOpSpec eos)* '}'
+    ;
+
+condExpression
+    :  cond1=compareUnit compare=rEL_OP cond2=compareUnit
+    ;
+
+rEL_OP
+    : equal='=='
+    | neq='!='
+    | smal='<'
+    | smequ='<='
+    | larg='>'
+    | largequ='>='
+    ;
+
+compareUnit
+    : number=numericallit| name=IDENTIFIER | recv=IDENTIFIER '.' method=IDENTIFIER
+    ;
+
 
 numericallit
     : INT_LIT | FLOAT_LIT
     ;
 
-
 paymentSpec
-    : 'op' opname=IDENTIFIER 'payment' amt=numericallit unit=STRING_LIT 'from' fromacct=IDENTIFIER 'to' toacct=IDENTIFIER
+    : 'op' opname=IDENTIFIER 'payment' (amt=numericallit | contract=stateField) unit=STRING_LIT 'from' fromacct=IDENTIFIER 'to' toacct=IDENTIFIER
     ('with' amtuint=numericallit STRING_LIT 'as' newamt=numericallit newuint=STRING_LIT)?
     ;
 
 contractInvocationSpec
     : 'op' opname=IDENTIFIER 'call' recv=IDENTIFIER '.' method=IDENTIFIER '(' args = argList? ')' ('using' acct=IDENTIFIER )*
+    ;
+
+ifpaymentSpec
+    : 'op' opname=IDENTIFIER 'payment' (amt=numericallit | contract=stateField) unit=STRING_LIT 'from' fromacct=IDENTIFIER 'to' toacct=IDENTIFIER
+    ('with' amtuint=numericallit STRING_LIT 'as' newamt=numericallit newuint=STRING_LIT)?
+    ;
+
+ifcontractInvocationSpec
+    : 'op' opname=IDENTIFIER 'call' recv=IDENTIFIER '.' method=IDENTIFIER '(' args = argList? ')' ('using' acct=IDENTIFIER )*
+    ;
+
+stateField
+    :IDENTIFIER '.' IDENTIFIER
     ;
 
 arg
@@ -234,8 +294,6 @@ depSpec
 identifierList
     : IDENTIFIER ( ',' IDENTIFIER )*
     ;
-
-
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Operands

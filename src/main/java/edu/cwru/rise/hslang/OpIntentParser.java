@@ -19,7 +19,7 @@ public class OpIntentParser {
     public static void main(String[] args) {
         try {
             // Create a scanner that reads from the input stream passed to us
-            String file = "contracts/DelegateAdmin/federated_admin.hsl";
+            String file = "contracts/DelegateAdmin/test.hsl";
             //String file = "contracts/Finance/option.hsl";
             //String file = "contracts/CrypotAsset/asset_simplified.hsl";
             CharStream charStream = new ANTLRInputStream(new String(Files.readAllBytes(Paths.get(file))));
@@ -51,9 +51,6 @@ public class OpIntentParser {
                 throw new HSLParsingException("Wrong dependencies");
             }
 
-            if(visitor.visited.size() != visitor.setNum.size()){
-                throw new HSLParsingException("Incomplete dependencies");
-            }
             String eol = ",\n";
             int eolLen = eol.length();
             String tmp = visitor.output.toString();
