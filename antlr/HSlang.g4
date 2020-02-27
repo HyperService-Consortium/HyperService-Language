@@ -198,7 +198,7 @@ opSpec
     ;
 
 ifSpec
-    : ifStatemnt (elseStatement)*
+    : 'op' opname=IDENTIFIER ifStatemnt (elseStatement)*
     ;
 
 ifStatemnt
@@ -224,7 +224,7 @@ blockOpSpec
     : ifpaymentSpec | ifcontractInvocationSpec
     ;
 loopSpec
-    : 'loop(' times=numericallit '){' (blockVarSpec eos)* (blockOpSpec eos)* '}'
+    : 'op' opname=IDENTIFIER 'loop(' times=numericallit '){' (ifSpec eos)* (blockVarSpec eos)* (blockOpSpec eos)* '}'
     ;
 
 condExpression

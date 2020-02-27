@@ -15,18 +15,21 @@ contract c3 = Chain3::Delegate("0x3723261b2a5a62b778b5c74318d34d7fdhhldb38c")
 
 op op1 payment c2.totalVotes "ether" from a1 to a2 with 1 "ether" as 2 "XYZ"
 op op2 call c2.vote() using a2
-if(c2.district> c2.totalVotes){
+
+op t1 if(c2.num_count > c2.totalVotes){
  contract c4 = Chain2::delegate("0x3723261b2a5a62b778b5c74318d34d7fdhhldb38e")
  op op3 call c4.vote() using a2
  op op4 payment c2.totalVotes "ether" from a1 to a2 with 1 "ether" as 2 "XYZ"
-
 }
 else{
 op op5 call c2.vote() using a2
 }
-loop(5){
-op op6 call c2.vote() using a2
+
+op t2 loop(5){
+    op op6 call c2.vote() using a2
 }
 
 dep:
 op1 before op2
+
+

@@ -58,6 +58,22 @@ public class OpIntentParser {
             System.out.println(out + "\n]");
             dep = dep.substring(0, dep.length()-eolLen);
             System.out.println(dep + "\n]");
+
+            StringBuilder account = visitor.accountMap;
+            StringBuilder contract = visitor.contractMap;
+            account.setLength(account.length()-2);
+            contract.setLength(contract.length()-2);
+            StringBuilder res = new StringBuilder();
+            res.append("\"contracts\":[\n");
+            res.append(contract);
+            res.append("]\n");
+            System.out.print(res.toString());
+            res.setLength(0);
+            res.append("\"accounts\":[\n");
+            res.append(account);
+            res.append("]\n");
+            System.out.println(res.toString());
+
             /*
             long stop = System.currentTimeMillis();
             long lexerTime = stop-start;

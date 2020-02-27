@@ -27,7 +27,10 @@ import edu.cwru.rise.hslang.structure.ContractInvocation;
 import edu.cwru.rise.hslang.structure.Dependencies;
 import edu.cwru.rise.hslang.structure.Field;
 import edu.cwru.rise.hslang.structure.Function;
+import edu.cwru.rise.hslang.structure.IfCondition;
 import edu.cwru.rise.hslang.structure.Inputs;
+import edu.cwru.rise.hslang.structure.Maccount;
+import edu.cwru.rise.hslang.structure.Mcontract;
 import edu.cwru.rise.hslang.structure.Parameter;
 import edu.cwru.rise.hslang.structure.Payment;
 import edu.cwru.rise.hslang.structure.Sources;
@@ -54,7 +57,9 @@ public class OpIntentVisitor extends HSlangBaseVisitor<String> {
     public Map<String, Integer> setNum; // name / order
     public Set<String> opSet, visited;// opSet:store operations
     public StringBuffer output, res;
+    public StringBuilder contractMap = new StringBuilder(), accountMap = new StringBuilder();
     public int numOp;
+    public Set<String> visitedIf = new HashSet<>();
 
 
     public OpIntentVisitor(){
@@ -142,6 +147,9 @@ public class OpIntentVisitor extends HSlangBaseVisitor<String> {
 
             defiVar.put(contractName, ctx.chain.getText());
             defiVrAddr.put(contractName, ctx.contractAddr().address.getText());
+            Mcontract addContract = new Mcontract(contractName, ctx.chain.getText(),ctx.contractAddr().address.getText().replaceAll("\"",""));
+            contractMap.append(addContract.toJson());
+            contractMap.append(",\n");
         }catch (Exception e) {
             System.err.println("Contract exception: " + e);
             e.printStackTrace();
@@ -207,7 +215,7 @@ public class OpIntentVisitor extends HSlangBaseVisitor<String> {
             if(ctx.newuint != null) {
                 String newuint = ctx.newuint.getText().replace("\"", "");
                 rati.append(ctx.amtuint.getText() + " ");
-                rati.append(unit + " as " + newuint);
+                rati.append(unit + " as " + ctx.newamt.getText()+ " "+ newuint);
             }
             Payment opPay = new Payment(opName,src,dst, amount.toString(), unit, rati.toString());
 
@@ -229,36 +237,17 @@ public class OpIntentVisitor extends HSlangBaseVisitor<String> {
     @Override
     public String visitIfSpec(HSlangParser.IfSpecContext ctx){
         try {
-            //System.out.println("list + " + list.size());
-                IfStatemntContext ifstate = ctx.ifStatemnt();
-                CompareUnitContext cond1 = ifstate.condExpression().cond1;
-                CompareUnitContext cond2 = ifstate.condExpression().cond2;
-                if(!conditionExpression(cond1) || !conditionExpression(cond2)){
-                    throw new HSLParsingException("wrong condition");
+            if(!visitedIf.contains(ctx.opname.getText())) {
+                visitedIf.add(ctx.opname.getText());
+                int size = ctx.ifStatemnt().ifSpec().size();
+                if( size!= 0) {
+                    for(int i = 0; i < size; i++) {
+                        visitedIf.add(ctx.ifStatemnt().ifSpec().get(i).opname.getText());
+                    }
                 }
-                REL_OPContext rel_opContext = ifstate.condExpression().compare;
-                String operation = operationCompare(rel_opContext);
-                output.append("[\n");
-                output.append(" \"IfStatement\": if " + "\"" +cond1.getText()+ "\"" + operation + "\"" +cond2.getText()+ "\"" + "{\n");
-                Map<String, String> ifVar = new HashMap<>();
-                Map<String, String> ifVarAddr = new HashMap<>();
-                List<BlockVarSpecContext> varList = ifstate.blockVarSpec();
-                blockVarSt(varList,ifVar,ifVarAddr);
-                List<BlockOpSpecContext> ifOpers = ifstate.blockOpSpec();
-                blockOper(ifOpers, ifVar, ifVarAddr);
-            if(ctx.elseStatement() != null){
-                output.append("\n \"else\" :{\n");
-                List<ElseStatementContext> elseS = ctx.elseStatement();
-                for(int k = 0; k < elseS.size(); k++) {
-                    List<BlockVarSpecContext> elsevarList = ctx.elseStatement().get(k).blockVarSpec();
-                    Map<String, String> elseVar = new HashMap<>();
-                    Map<String, String> elseVarAddr = new HashMap<>();
-                    blockVarSt(elsevarList, elseVar,elseVarAddr);
-                    List<BlockOpSpecContext> elseVarList = ctx.elseStatement().get(k).blockOpSpec();
-                    blockOper(elseVarList, ifVar, ifVarAddr);
-                }
+               StringBuilder res = visitif(ctx);
+                output.append(res.toString());
             }
-            output.append("]\n");
         }catch (Exception e){
             System.err.println("IfSpec exception: " + e);
             e.printStackTrace();
@@ -267,25 +256,109 @@ public class OpIntentVisitor extends HSlangBaseVisitor<String> {
         return super.visitIfSpec(ctx);
     }
 
-    @Override
-    public String visitLoopSpec(LoopSpecContext ctx){
-        String loopTime = ctx.times.getText();
-        try {
-            output.append("[\n");
-            output.append(" \"loop\" " + "\"" + loopTime + "\" :{\n");
+    private StringBuilder visitif(HSlangParser.IfSpecContext ctx) throws HSLParsingException{
+        StringBuilder res = new StringBuilder();
+            visitedIf.add(ctx.opname.getText());
+            IfStatemntContext ifstate = ctx.ifStatemnt();
+            CompareUnitContext cond1 = ifstate.condExpression().cond1;
+            CompareUnitContext cond2 = ifstate.condExpression().cond2;
+            if(!conditionExpression(cond1) || !conditionExpression(cond2)){
+                throw new HSLParsingException("wrong condition");
+            }
+            REL_OPContext rel_opContext = ifstate.condExpression().compare;
+            String operation = operationCompare(rel_opContext);
+            res.append("{\n");
+            res.append("  \"name\":\"if-op\",\n");
+            res.append("  \"type\":\"IfStatement\",\n");
+            res.append("  \"if\":[");
             Map<String, String> ifVar = new HashMap<>();
             Map<String, String> ifVarAddr = new HashMap<>();
-            List<BlockVarSpecContext> varList = ctx.blockVarSpec();
+            int size = ctx.ifStatemnt().ifSpec().size();
+            if( size!= 0) {
+                for(int i = 0; i < size; i++) {
+                    StringBuilder tmp = visitif(ctx.ifStatemnt().ifSpec().get(i));
+                    visitedIf.add(ctx.ifStatemnt().ifSpec().get(i).opname.getText());
+                    res.append(tmp);
+                }
+            }
+            List<BlockVarSpecContext> varList = ifstate.blockVarSpec();
             blockVarSt(varList,ifVar,ifVarAddr);
-            List<BlockOpSpecContext> lists = ctx.blockOpSpec();
-            blockOper(lists, ifVar, ifVarAddr);
-            output.append("]\n");
+            List<BlockOpSpecContext> ifOpers = ifstate.blockOpSpec();
+            blockOper(ifOpers, ifVar, ifVarAddr, res);
+            res.setLength(res.length()-2);
+            res.append("],\n");
+            if(ctx.elseStatement().size() != 0){
+                res.append("  \"else\" : [\n");
+                List<ElseStatementContext> elseS = ctx.elseStatement();
+                for(int k = 0; k < elseS.size(); k++) {
+                    List<BlockVarSpecContext> elsevarList = ctx.elseStatement().get(k).blockVarSpec();
+                    Map<String, String> elseVar = new HashMap<>();
+                    Map<String, String> elseVarAddr = new HashMap<>();
+                    blockVarSt(elsevarList, elseVar,elseVarAddr);
+                    List<BlockOpSpecContext> elseVarList = ctx.elseStatement().get(k).blockOpSpec();
+                    blockOper(elseVarList, ifVar, ifVarAddr,res);
+                }
+                res.setLength(res.length()-2);
+                res.append("],\n");
+            }
+            res.append("\"condition\":");
+            Value leftV = new Value();
+            Value rightV = new Value();
+            String leftType = Typecheck(cond1.getText(),leftV);
+            String rightType =Typecheck(cond2.getText(),rightV);
+            Inputs left = new Inputs(leftType, leftV);
+            Inputs right = new Inputs(rightType, rightV);
+            IfCondition ifcd = new IfCondition(left, right,operation);
+            //Condition cd = new Condition(cond1.getText(),cond2.getText(),operation);
+            res.append(ifcd.toJson().toString());
+            res.append("\n},");
+        return res;
+    }
+
+    @Override
+    public String visitLoopSpec(LoopSpecContext ctx){
+        try {
+            if(!visitedIf.contains(ctx.opname.getText())){
+                visitedIf.add(ctx.opname.getText());
+                StringBuilder res = visitLoop(ctx);
+                output.append(res.toString());
+            }
         }catch (Exception e){
             System.err.println("IfSpec exception: " + e);
             e.printStackTrace();
             return super.visitLoopSpec(ctx);
         }
         return super.visitLoopSpec(ctx);
+    }
+
+    public StringBuilder visitLoop(HSlangParser.LoopSpecContext ctx) throws HSLParsingException{
+        StringBuilder res = new StringBuilder();
+        visitedIf.add(ctx.opname.getText());
+        String loopTime = ctx.times.getText();
+        res.append("\n{\n");
+        res.append("  \"name\":\"loop\",\n");
+        res.append("  \"type\":\"loopFunction\",\n");
+        res.append("  \"loop\":[\n");
+        int size = ctx.ifSpec().size();
+        if( size!= 0) {
+            for(int i = 0; i < size; i++) {
+                StringBuilder tmp = visitif(ctx.ifSpec().get(i));
+
+                visitedIf.add(ctx.ifSpec().get(i).opname.getText());
+                res.append(tmp);
+            }
+        }
+        Map<String, String> ifVar = new HashMap<>();
+        Map<String, String> ifVarAddr = new HashMap<>();
+        List<BlockVarSpecContext> varList = ctx.blockVarSpec();
+        blockVarSt(varList,ifVar,ifVarAddr);
+        List<BlockOpSpecContext> lists = ctx.blockOpSpec();
+        blockOper(lists, ifVar, ifVarAddr, res);
+        res.setLength(res.length()-2);
+        res.append("],\n");
+        res.append(" \"loopTime\" : " +  "\"" + loopTime + "\" ");
+        res.append("\n},\n");
+        return res;
     }
 
     private void blockVarSt(List<BlockVarSpecContext> varList, Map<String, String> ifVar, Map<String, String> ifVarAddr) throws HSLParsingException{
@@ -302,38 +375,30 @@ public class OpIntentVisitor extends HSlangBaseVisitor<String> {
         }
     }
 
-    private void blockOper(List<BlockOpSpecContext> ifOpers, Map<String, String> ifVar, Map<String, String> ifVarAddr) throws HSLParsingException{
+    private void blockOper(List<BlockOpSpecContext> ifOpers, Map<String, String> ifVar, Map<String, String> ifVarAddr, StringBuilder res) throws HSLParsingException{
         for(int j = 0; j < ifOpers.size(); j++){
             BlockOpSpecContext ifopSpec = ifOpers.get(j);
             if(ifopSpec.ifcontractInvocationSpec() != null){
                 String opName = ifopSpec.ifcontractInvocationSpec().opname.getText();
                 ContractInvocation conIn = contractInvocation(ifopSpec.ifcontractInvocationSpec(),ifVar, ifVarAddr);
-                output.append(conIn.toJson());
-                if(j == ifOpers.size() - 1){
-                    output.append("Ending\n");
-                }
-                else{
-                    output.append(",\n");
-                }
+                res.append(conIn.toJson());
+                    res.append(",\n");
+
                 setNum.put(opName, numOp++);
                 inDegree = new int[numOp];
             }
             else{
                 String opName = ifopSpec.ifpaymentSpec().opname.getText();
                 Payment opPay = paymentSpec(ifopSpec.ifpaymentSpec(), ifVar);
-                output.append(opPay.toJson());
-                if(j == ifOpers.size() - 1){
-                    output.append("Ending\n");
-                }
-                else{
-                    output.append(",\n");
-                }
+                res.append(opPay.toJson());
+                    res.append(",\n");
+
                 setNum.put(opName,numOp++);
                 inDegree = new int[numOp];
                 opCheck(opName);
             }
         }
-        output.append("}");
+        //res.append("}");
     }
 
     private Payment paymentSpec(IfpaymentSpecContext ctx, Map<String, String> ifVar) throws HSLParsingException {
@@ -373,7 +438,7 @@ public class OpIntentVisitor extends HSlangBaseVisitor<String> {
         if(ctx.newuint != null) {
             String newuint = ctx.newuint.getText().replace("\"", "");
             rati.append(ctx.amtuint.getText() + " ");
-            rati.append(unit + " as " + newuint);
+            rati.append(unit + " as " + ctx.newamt.getText() + " "+ newuint);
         }
         return new Payment(ctx.opname.getText(),src,dst, amount.toString(), unit, rati.toString());
     }
@@ -395,13 +460,22 @@ public class OpIntentVisitor extends HSlangBaseVisitor<String> {
     }
 
     private String operationCompare(REL_OPContext ctx){
-        if(ctx.equal != null) return " == ";
-        if(ctx.neq != null) return " != ";
-        if(ctx.smal != null) return " < ";
-        if(ctx.smequ != null) return " <= ";
-        if(ctx.larg != null) return " > ";
-        else return " >= ";
+        if(ctx.equal != null) return " Equal ";
+        if(ctx.neq != null) return " Inequal ";
+        if(ctx.smal != null) return " Less ";
+        if(ctx.smequ != null) return " Less than or Equal ";
+        if(ctx.larg != null) return " Greater ";
+        else return " Greater than or Equal ";
     }
+   /*
+    private char operationCompare(REL_OPContext ctx){
+        if(ctx.equal != null) return '=';
+        if(ctx.neq != null) return " Inequal ";
+        if(ctx.smal != null) return " Less ";
+        if(ctx.smequ != null) return " Less than or Equal ";
+        if(ctx.larg != null) return " Greater ";
+        else return " Greater than or Equal ";
+    }*/
 
     private ContractInvocation contractInvocation(HSlangParser.IfcontractInvocationSpecContext ctx, Map<String, String> ifVar, Map<String, String> ifVarAddr) throws HSLParsingException {
         String opName = ctx.opname.getText();
@@ -655,6 +729,11 @@ public class OpIntentVisitor extends HSlangBaseVisitor<String> {
             tmp.put(id,addr);
             defiVar.put(id,chainId);
             defiVrAddr.put(id, addr);
+
+            Maccount add = new Maccount(id, chainId,addr.replaceAll("\"",""));
+               accountMap.append(add.toJson());
+               accountMap.append(",\n");
+
         }catch (Exception e) {
             System.err.println(e);
             e.printStackTrace();
