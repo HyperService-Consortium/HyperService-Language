@@ -40,6 +40,26 @@ public interface HSlangListener extends ParseTreeListener {
 	 */
 	void exitImportSpec(HSlangParser.ImportSpecContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link HSlangParser#arrDefin}.
+	 * @param ctx the parse tree
+	 */
+	void enterArrDefin(HSlangParser.ArrDefinContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link HSlangParser#arrDefin}.
+	 * @param ctx the parse tree
+	 */
+	void exitArrDefin(HSlangParser.ArrDefinContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link HSlangParser#arrSpec}.
+	 * @param ctx the parse tree
+	 */
+	void enterArrSpec(HSlangParser.ArrSpecContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link HSlangParser#arrSpec}.
+	 * @param ctx the parse tree
+	 */
+	void exitArrSpec(HSlangParser.ArrSpecContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link HSlangParser#varSpec}.
 	 * @param ctx the parse tree
 	 */
@@ -89,6 +109,26 @@ public interface HSlangListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitOpSpec(HSlangParser.OpSpecContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link HSlangParser#foreachSpec}.
+	 * @param ctx the parse tree
+	 */
+	void enterForeachSpec(HSlangParser.ForeachSpecContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link HSlangParser#foreachSpec}.
+	 * @param ctx the parse tree
+	 */
+	void exitForeachSpec(HSlangParser.ForeachSpecContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link HSlangParser#forOp}.
+	 * @param ctx the parse tree
+	 */
+	void enterForOp(HSlangParser.ForOpContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link HSlangParser#forOp}.
+	 * @param ctx the parse tree
+	 */
+	void exitForOp(HSlangParser.ForOpContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link HSlangParser#ifSpec}.
 	 * @param ctx the parse tree
@@ -209,6 +249,16 @@ public interface HSlangListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitNumericallit(HSlangParser.NumericallitContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link HSlangParser#account}.
+	 * @param ctx the parse tree
+	 */
+	void enterAccount(HSlangParser.AccountContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link HSlangParser#account}.
+	 * @param ctx the parse tree
+	 */
+	void exitAccount(HSlangParser.AccountContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link HSlangParser#paymentSpec}.
 	 * @param ctx the parse tree

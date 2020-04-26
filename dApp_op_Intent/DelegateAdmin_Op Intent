@@ -1,92 +1,122 @@
-[
-{
-  "name": "op1",
-  "type": "ContractInvocation",
-  "invoker": "a2",
-  "func": "vote",
-  "contract": {
-    "domain": "Chain2",
-    "address": "0x3723261b2a5a62b778b5c74318534d7fdf8db38c"
-  },
-  "parameters": []
-},
-{
-  "name": "op2",
-  "type": "ContractInvocation",
-  "invoker": "a1",
-  "func": "submitVotes",
-  "contract": {
-    "domain": "Chain1",
-    "address": "0xafc7d2959e72081770304f6474151293be1fbba7"
-  },
-  "parameters": [
-    {
-      "Type": "string",
-      "Value": {
-        "contract": "c2",
-        "field": "district",
-        "pos": "2"
-      }
-    },
-    {
-      "Type": "uint",
-      "Value": {
-        "contract": "c2",
-        "field": "totalVotes",
-        "pos": "1"
-      }
-    }
-  ]
-},
-{
-  "name": "op3",
-  "type": "ContractInvocation",
-  "invoker": "a3",
-  "func": "Vote",
-  "contract": {
-    "domain": "Chain3",
-    "address": "0x3723261b2a5a62b778b5c74318d34d7fdhhldb38c"
-  },
-  "parameters": []
-},
-{
-  "name": "op4",
-  "type": "ContractInvocation",
-  "invoker": "a1",
-  "func": "submitVotes",
-  "contract": {
-    "domain": "Chain1",
-    "address": "0xafc7d2959e72081770304f6474151293be1fbba7"
-  },
-  "parameters": [
-    {
-      "Type": "string",
-      "Value": {
-        "contract": "c2",
-        "field": "district",
-        "pos": "2"
-      }
-    },
-    {
-      "Type": "uint",
-      "Value": {
-        "contract": "c2",
-        "field": "totalVotes",
-        "pos": "1"
-      }
-    }
-  ]
-}
+[{
+		"name": "op1",
+		"type": "ContractInvocation",
+		"invoker": "a2",
+		"func": "vote",
+		"contract": {
+			"domain": "Chain2",
+			"address": "0x3723261b2a5a62b778b5c74318534d7fdf8db38c"
+		},
+		"parameters": []
+	},
+	{
+		"name": "op2",
+		"type": "ContractInvocation",
+		"invoker": "a1",
+		"func": "submitVotes",
+		"contract": {
+			"domain": "Chain1",
+			"address": "0xafc7d2959e72081770304f6474151293be1fbba7"
+		},
+		"parameters": [{
+				"Type": "string",
+				"Value": {
+					"contract": "c2",
+					"field": "district",
+					"pos": "2"
+				}
+			},
+			{
+				"Type": "uint",
+				"Value": {
+					"contract": "c2",
+					"field": "totalVotes",
+					"pos": "1"
+				}
+			}
+		]
+	},
+	{
+		"name": "op3",
+		"type": "ContractInvocation",
+		"invoker": "a3",
+		"func": "Vote",
+		"contract": {
+			"domain": "Chain3",
+			"address": "0x3723261b2a5a62b778b5c74318d34d7fdhhldb38c"
+		},
+		"parameters": []
+	},
+	{
+		"name": "op4",
+		"type": "ContractInvocation",
+		"invoker": "a1",
+		"func": "submitVotes",
+		"contract": {
+			"domain": "Chain1",
+			"address": "0xafc7d2959e72081770304f6474151293be1fbba7"
+		},
+		"parameters": [{
+				"Type": "string",
+				"Value": {
+					"contract": "c2",
+					"field": "district",
+					"pos": "2"
+				}
+			},
+			{
+				"Type": "uint",
+				"Value": {
+					"contract": "c2",
+					"field": "totalVotes",
+					"pos": "1"
+				}
+			}
+		]
+	},
+	{
+		"dependencies": [{
+				"left": "op1",
+				"right": "op2",
+				"dep": "before"
+			},
+			{
+				"left": "op3",
+				"right": "op4",
+				"dep": "before"
+			}
+		],
+		"contracts": [{
+				"contractName": "c1",
+				"domain": "Chain1",
+				"address": "0xafc7d2959e72081770304f6474151293be1fbba7"
+			},
+			{
+				"contractName": "c2",
+				"domain": "Chain2",
+				"address": "0x3723261b2a5a62b778b5c74318534d7fdf8db38c"
+			},
+			{
+				"contractName": "c3",
+				"domain": "Chain3",
+				"address": "0x3723261b2a5a62b778b5c74318d34d7fdhhldb38c"
+			}
+		],
+		"accounts": [{
+				"userName": "a1",
+				"domain": "chain1",
+				"address": "0x7019fa779024c0a0eac1d8475733eefe10a49f3b"
+			},
+			{
+				"userName": "a2",
+				"domain": "chain2",
+				"address": "0x47a1cdb6594d6efed3a6b917f2fbaa2bbcf61a2e"
+			},
+			{
+				"userName": "a3",
+				"domain": "chain3",
+				"address": "0x47a1cdb6559d6efed3a6b917f2fbaa2bbcf61a2e"
+			}
+		]
+	}
 ]
-"dependencies":[{
-  "left": "op1",
-  "right": "op2",
-  "dep": "before"
-},
-{
-  "left": "op3",
-  "right": "op4",
-  "dep": "before"
-}
-]
-

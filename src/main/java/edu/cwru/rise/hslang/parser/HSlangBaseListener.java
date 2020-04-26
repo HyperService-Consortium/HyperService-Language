@@ -54,6 +54,30 @@ public class HSlangBaseListener implements HSlangListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterArrDefin(HSlangParser.ArrDefinContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitArrDefin(HSlangParser.ArrDefinContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterArrSpec(HSlangParser.ArrSpecContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitArrSpec(HSlangParser.ArrSpecContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterVarSpec(HSlangParser.VarSpecContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -109,6 +133,30 @@ public class HSlangBaseListener implements HSlangListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitOpSpec(HSlangParser.OpSpecContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterForeachSpec(HSlangParser.ForeachSpecContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitForeachSpec(HSlangParser.ForeachSpecContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterForOp(HSlangParser.ForOpContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitForOp(HSlangParser.ForOpContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -253,6 +301,18 @@ public class HSlangBaseListener implements HSlangListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitNumericallit(HSlangParser.NumericallitContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterAccount(HSlangParser.AccountContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitAccount(HSlangParser.AccountContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

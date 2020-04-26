@@ -6,27 +6,33 @@ import ("contracts/DelegateAdmin/federal.sol")
 import ("contracts/DelegateAdmin/delegate.vy")
 import ("contracts/DelegateAdmin/delegate.go")
 
-account a1 = chain1::"0x7019fa779024c0a0eac1d8475733eefe10a49f3b" // account addr
-account a2 = chain2::"0x47a1cdb6594d6efed3a6b917f2fbaa2bbcf61a2e"
-account a3 = chain3::"0x47a1cdb6559d6efed3a6b917f2fbaa2bbcf61a2e"
+account[] a1 = new account[2]
+a1[0] = chain1::"0x7019fa779024c0a0eac1d8475733eefe10a49f3b" // account addr
+a1[1] = chain2::"0x47a1cdb6594d6efed3a6b917f2fbaa2bbcf61a2g"
+account a2 = chain2::"0x47a1cdb6559d6efed3a6b917f2fbaa2bbcf61a2e"
+account a3 = chain3::"0x47a1cdb6559d6efed3a6b917f2fbaa2bbcf61a2f"
+
 contract c1 = Chain1::Federal("0xafc7d2959e72081770304f6474151293be1fbba7")  // contract addr
 contract c2 = Chain2::delegate("0x3723261b2a5a62b778b5c74318534d7fdf8db38c")  // contract addr
 contract c3 = Chain3::Delegate("0x3723261b2a5a62b778b5c74318d34d7fdhhldb38c")
 
-op op1 payment c2.totalVotes "ether" from a1 to a2 with 1 "ether" as 2 "XYZ"
-op op2 call c2.vote() using a2
+/*
+for(account a : a1){
+    op op3 payment 50 "ether" from a2 to a with 1 "ether" as 1 "XYZ"
+    op op4 call c2.vote() using a
+}
+*/
+op op1 payment 50 "ether" from a1[0] to a3 with 1 "ether" as 1 "XYZ"
+op op2 call c2.vote() using a3
 
 op t1 if(c2.num_count > c2.totalVotes){
  contract c4 = Chain2::delegate("0x3723261b2a5a62b778b5c74318d34d7fdhhldb38e")
- op op3 call c4.vote() using a2
- op op4 payment c2.totalVotes "ether" from a1 to a2 with 1 "ether" as 2 "XYZ"
+ op op5 call c4.vote() using a3
+ op op6 payment 50 "ether" from a2 to a1[0] with 1 "ether" as 2 "XYZ"
 }
 else{
-op op5 call c2.vote() using a2
-}
-
-op t2 loop(5){
-    op op6 call c2.vote() using a2
+    op op7 call c2.vote() using a2
+    op op8 payment 50 "ether" from a1[0] to a2 with 1 "ether" as 2 "XYZ"
 }
 
 dep:

@@ -31,6 +31,18 @@ public interface HSlangVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitImportSpec(HSlangParser.ImportSpecContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link HSlangParser#arrDefin}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitArrDefin(HSlangParser.ArrDefinContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link HSlangParser#arrSpec}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitArrSpec(HSlangParser.ArrSpecContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link HSlangParser#varSpec}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -60,6 +72,18 @@ public interface HSlangVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitOpSpec(HSlangParser.OpSpecContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link HSlangParser#foreachSpec}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitForeachSpec(HSlangParser.ForeachSpecContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link HSlangParser#forOp}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitForOp(HSlangParser.ForOpContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link HSlangParser#ifSpec}.
 	 * @param ctx the parse tree
@@ -132,6 +156,12 @@ public interface HSlangVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitNumericallit(HSlangParser.NumericallitContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link HSlangParser#account}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitAccount(HSlangParser.AccountContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link HSlangParser#paymentSpec}.
 	 * @param ctx the parse tree

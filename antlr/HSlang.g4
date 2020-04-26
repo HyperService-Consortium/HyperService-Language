@@ -176,9 +176,20 @@ importSpec
     : STRING_LIT
     ;
 
+arrDefin
+    : 'account' ('[]' name=IDENTIFIER | name=IDENTIFIER'[]') '=' 'new' 'account' '[' amt=numericallit ']'
+    | 'contract' ('[]' name=IDENTIFIER | name=IDENTIFIER'[]') '=' 'new' 'contract' '[' amt=numericallit ']'
+    ;
+
+arrSpec
+    : name=IDENTIFIER '[' amt=numericallit ']' '=' chain=IDENTIFIER '::' (address=STRING_LIT | contractAddr)
+    ;
+
 varSpec
     : accountSpc
     | contractSpc
+    | arrDefin
+    | arrSpec
     ;
 
 accountSpc
@@ -194,9 +205,17 @@ contractAddr
     ;
 
 opSpec
-    : ifSpec | loopSpec | paymentSpec | contractInvocationSpec
+    : ifSpec | loopSpec | paymentSpec | contractInvocationSpec| foreachSpec
     ;
 
+foreachSpec
+    : 'for(' (ac ='account' | con ='contract') name=IDENTIFIER ':' arryName = IDENTIFIER '){'
+        (forOp eos)* '}'
+    ;
+
+forOp
+    :paymentSpec|contractInvocationSpec
+    ;
 ifSpec
     : 'op' opname=IDENTIFIER ifStatemnt (elseStatement)*
     ;
@@ -249,22 +268,26 @@ numericallit
     : INT_LIT | FLOAT_LIT
     ;
 
+account
+    : fromacct=IDENTIFIER | accAr = IDENTIFIER '[' index= numericallit ']'
+    ;
+
 paymentSpec
-    : 'op' opname=IDENTIFIER 'payment' (amt=numericallit | contract=stateField) unit=STRING_LIT 'from' fromacct=IDENTIFIER 'to' toacct=IDENTIFIER
+    : 'op' opname=IDENTIFIER 'payment' (amt=numericallit | contract=stateField) unit=STRING_LIT 'from' (from = account) 'to' toacc = account
     ('with' amtuint=numericallit STRING_LIT 'as' newamt=numericallit newuint=STRING_LIT)?
     ;
 
 contractInvocationSpec
-    : 'op' opname=IDENTIFIER 'call' recv=IDENTIFIER '.' method=IDENTIFIER '(' args = argList? ')' ('using' acct=IDENTIFIER )*
+    : 'op' opname=IDENTIFIER 'call' recv=IDENTIFIER '.' method=IDENTIFIER '(' args = argList? ')' ('using' account)*
     ;
 
 ifpaymentSpec
-    : 'op' opname=IDENTIFIER 'payment' (amt=numericallit | contract=stateField) unit=STRING_LIT 'from' fromacct=IDENTIFIER 'to' toacct=IDENTIFIER
+    : 'op' opname=IDENTIFIER 'payment' (amt=numericallit | contract=stateField) unit=STRING_LIT 'from' (from = account) 'to' toacc = account
     ('with' amtuint=numericallit STRING_LIT 'as' newamt=numericallit newuint=STRING_LIT)?
     ;
 
 ifcontractInvocationSpec
-    : 'op' opname=IDENTIFIER 'call' recv=IDENTIFIER '.' method=IDENTIFIER '(' args = argList? ')' ('using' acct=IDENTIFIER )*
+    : 'op' opname=IDENTIFIER 'call' recv=IDENTIFIER '.' method=IDENTIFIER '(' args = argList? ')' ('using' account )*
     ;
 
 stateField
@@ -361,6 +384,7 @@ KEYWORD
     | 'import'
     | 'return'
     | 'var'
+    | 'new'
     ;
 
 
