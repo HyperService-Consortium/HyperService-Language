@@ -1,0 +1,188 @@
+[{
+  "name": "op1.1",
+  "type": "Payment",
+  "src": {
+    "domain": "EthereumX",
+    "user_name": "a1[0]"
+  },
+  "dst": {
+    "domain": "EthereumY",
+    "user_name": "a2"
+  },
+  "amount": "10",
+  "unit": "ether",
+  "ratio": "1 ether as 1 XYZ"
+},
+  {
+    "name": "op1.2",
+    "type": "Payment",
+    "src": {
+      "domain": "EthereumX",
+      "user_name": "a1[1]"
+    },
+    "dst": {
+      "domain": "EthereumY",
+      "user_name": "a2"
+    },
+    "amount": "10",
+    "unit": "ether",
+    "ratio": "1 ether as 1 XYZ"
+  },
+  {
+    "name": "op2",
+    "type": "ContractInvocation",
+    "invoker": "a2",
+    "func": "getGenuineValue",
+    "contract": {
+      "domain": "EthereumY",
+      "address": "0xafc7d2959e72081770304f6474151293be1fbba7"
+    },
+    "parameters": []
+  },
+  {
+    "name": "op3",
+    "type": "Payment",
+    "src": {
+      "domain": "EthereumX",
+      "user_name": "a1[0]"
+    },
+    "dst": {
+      "domain": "EthereumX",
+      "user_name": "a1[0]"
+    },
+    "amount": "20",
+    "unit": "ether",
+    "ratio": "1 ether as 1 XYZ"
+  },
+  {
+    "name": "if-op",
+    "type": "IfStatement",
+    "if": [{
+      "name": "op5",
+      "type": "ContractInvocation",
+      "invoker": "a1[0]",
+      "func": "CashSettle",
+      "contract": {
+        "domain": "EthereumX",
+        "address": "0x3723261b2a5a62b778b5c74318534d7fdf8db38c"
+      },
+      "parameters": [{
+        "Type": "uint",
+        "Value": {
+          "contract": "c1",
+          "field": "genuineValue",
+          "pos": "0"
+        }
+      }]
+    },
+      {
+        "name": "op6",
+        "type": "Payment",
+        "src": {
+          "domain": "EthereumX",
+          "user_name": "a1[0]"
+        },
+        "dst": {
+          "domain": "Tendermint",
+          "user_name": "a3"
+        },
+        "amount": "10",
+        "unit": "ether",
+        "ratio": "1 ether as 1 XYZ"
+      },
+      {
+        "name": "op7",
+        "type": "ContractInvocation",
+        "invoker": "a3",
+        "func": "CashSettle",
+        "contract": {
+          "domain": "Tendermint",
+          "address": "0x8e215d06ea7ec1fdb4fc5fd21768f4b34ee92ef4"
+        },
+        "parameters": [{
+          "Type": "uint",
+          "Value": {
+            "contract": "c2",
+            "field": "strikePrice",
+            "pos": "1"
+          }
+        }]
+      }
+    ],
+    "else": [{
+      "name": "op8",
+      "type": "Payment",
+      "src": {
+        "domain": "EthereumX",
+        "user_name": "a1[0]"
+      },
+      "dst": {
+        "domain": "EthereumX",
+        "user_name": "a1[1]"
+      },
+      "amount": "20",
+      "unit": "ether",
+      "ratio": "1 ether as 1 XYZ"
+    }],
+    "condition": {
+      "left": {
+        "Type": "uint",
+        "Value": {
+          "contract": "c1",
+          "field": "genuineValue",
+          "pos": "0"
+        }
+      },
+      "right": {
+        "Type": "uint",
+        "Value": {
+          "constant": "50"
+        }
+      },
+      "sign": " Greater "
+    },
+
+    "dependencies": [{
+      "left": "op2",
+      "right": "op3",
+      "dep": "before"
+    }],
+    "contracts": [{
+      "contractName": "c1",
+      "domain": "EthereumY",
+      "address": "0xafc7d2959e72081770304f6474151293be1fbba7"
+    },
+      {
+        "contractName": "c2",
+        "domain": "EthereumX",
+        "address": "0x3723261b2a5a62b778b5c74318534d7fdf8db38c"
+      },
+      {
+        "contractName": "c3",
+        "domain": "Tendermint",
+        "address": "0x8e215d06ea7ec1fdb4fc5fd21768f4b34ee92ef4"
+      }
+    ],
+    "accounts": [{
+      "userName": "a1[0]",
+      "domain": "EthereumX",
+      "address": "0x7019fa779024c0a0eac1d8475733eefe10a49f3b"
+    },
+      {
+        "userName": "a1[1]",
+        "domain": "EthereumX",
+        "address": "0x47a1cdb6594d6efed3a6b917f2fbaa2bbcf61a2g"
+      },
+      {
+        "userName": "a2",
+        "domain": "EthereumY",
+        "address": "0x323b5d4c32345ced77393b3530b1eed0f346429d"
+      },
+      {
+        "userName": "a3",
+        "domain": "Tendermint",
+        "address": "0xe41d2489571d322189246dafa5ebde1f4699f498"
+      }
+    ]
+  }
+]

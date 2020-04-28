@@ -721,7 +721,13 @@ public class OpIntentVisitor extends HSlangBaseVisitor<String> {
 
     private ContractInvocation contractInvocation(HSlangParser.IfcontractInvocationSpecContext ctx, Map<String, String> ifVar, Map<String, String> ifVarAddr, Map<String, int[]> tmpMap) throws HSLParsingException {
         String opName = ctx.opname.getText();
-        String invoker = ctx.account().get(0).fromacct.getText();  // account id
+        String invoker;
+        if(ctx.account().get(0).index != null){
+             invoker = ctx.account().get(0).accAr.getText() + "[" + ctx.account().get(0).index.getText() + "]";
+            //System.out.print(ctx.account().get(0).index.getText());
+        }else {
+             invoker = ctx.account().get(0).fromacct.getText();  // account id
+        }
 
         // account is not exist
         if (defiVrAddr.get(invoker) == null && ifVarAddr.get(invoker) == null) {
