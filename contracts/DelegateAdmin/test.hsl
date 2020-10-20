@@ -25,14 +25,8 @@ op op3 payment 20 "ether" from a1[1] to a1[0] with 1 "ether" as 1 "XYZ"
 
 op op4 if(c1.genuineValue > 50){
    op op5 call c2.CashSettle(c1.genuineValue) using a1[0]
-   op op6 payment 10 "ether" from a1[0] to a3 with 1 "ether" as 1 "XYZ"
-   op op7 call c3.CashSettle(c2.strikePrice) using a3
-}
-else{
-    op op8 payment 20 "ether" from a1[0] to a1[1] with 1 "ether" as 1 "XYZ"
 }
 
 dep:
 op2 before op3
-
 

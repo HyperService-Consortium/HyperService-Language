@@ -97,6 +97,5 @@ contract Delegate {
         }
         delegates.length -= 1;
     }
-    
-    
+
 }

@@ -9,8 +9,10 @@ account a2 = chain2::"0x47a1cdb6594d6efed3a6b917f2fbaa2bbcf61a2e"
 
 contract c1 = chain1::CryptoAsset("0xafc7d2959e72081770304f6474151293be1fbba7")  // contract addr
 
-op op1 payment 20 "ether" from a2 to a1  with 1 "ether" as 2 "XYZ"
-op op2 call c1.deposit(10) using a1
+op o1 payment 20 "ether" from a2 to a1  with 1 "ether" as 2 "XYZ"
+op o2 call c1.deposit(10) using a1
+//op o3 call c1.deposit(10) using a1
 
 dep:
-op1 before op2
+o1 before o2
+o2 before o1

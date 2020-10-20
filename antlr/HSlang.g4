@@ -165,9 +165,6 @@ sourceFile
     : (importDecl eos )*(varSpec eos) * (opSpec eos) * (depSection eos)?
     ;
 
-//varSpec
-//    : identifierList ( type ( '=' expressionList )? | '=' expressionList )
-//    ;
 importDecl
     : 'import' '(' importSpec ')'
     ;
@@ -193,7 +190,7 @@ varSpec
     ;
 
 accountSpc
-    : 'account' id=IDENTIFIER '='  chain=IDENTIFIER '::' address=STRING_LIT
+    : 'account' id=IDENTIFIER '='  chain=IDENTIFIER '::' 'Account' '(' address=STRING_LIT ')'
     ;
 
 contractSpc
@@ -205,7 +202,16 @@ contractAddr
     ;
 
 opSpec
-    : ifSpec | loopSpec | paymentSpec | contractInvocationSpec| foreachSpec
+    : ifSpec | loopSpec | paymentSpec | contractInvocationSpec| foreachSpec | forLoop
+    ;
+
+forLoop
+    : 'op' opName = IDENTIFIER 'for' name=IDENTIFIER 'in' '['(collection)* ']' '{'
+        (blockOpSpec eos)* '}'
+    ;
+
+collection
+    : id = IDENTIFIER (',')?
     ;
 
 foreachSpec
@@ -221,10 +227,10 @@ ifSpec
     ;
 
 ifStatemnt
-    :'if(' condExpression '){' (ifSpec eos)* (blockVarSpec eos)* (blockOpSpec eos) * '}'
+    :'if(' condExpression '){' (ifSpec eos)* (forLoop eos)*   (blockVarSpec eos)* (blockOpSpec eos) * '}'
     ;
 elseStatement
-    :'else' '{' (ifSpec eos)* (blockVarSpec eos)* (blockOpSpec eos) * '}'
+    :'else' '{' (ifSpec eos)* (forLoop eos)*  (blockVarSpec eos)* (blockOpSpec eos) * '}'
     ;
 
 blockVarSpec
@@ -262,7 +268,6 @@ rEL_OP
 compareUnit
     : number=numericallit| name=IDENTIFIER | recv=IDENTIFIER '.' method=IDENTIFIER
     ;
-
 
 numericallit
     : INT_LIT | FLOAT_LIT
@@ -302,41 +307,26 @@ argList
     : arg (',' arg)*
     ;
 
-
 depSection
     : 'dep:' eos depSpec eos (depSpec eos)*
     ;
 
 depSpec
     : left=IDENTIFIER dep=IDENTIFIER right=identifierList
-    //: left=IDENTIFIER ('before' | 'after') right=identifierList
     ;
 
-//
-//IdentifierList = identifier { "," identifier } .
 identifierList
     : IDENTIFIER ( ',' IDENTIFIER )*
     ;
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Operands
-
-//Operand     = Literal | OperandName | MethodExpr | "(" Expression ")" .
-//Literal     = BasicLit | CompositeLit | FunctionLit .
-//BasicLit    = int_lit | float_lit | imaginary_lit | rune_lit | string_lit .
-//OperandName = identifier | QualifiedIdent.
-
 
 operandName
     : IDENTIFIER
     | qualifiedIdent
     ;
 
-//QualifiedIdent = PackageName "." identifier .
 qualifiedIdent
     : IDENTIFIER '.' IDENTIFIER
     ;
-
 
 eos
     : ';'

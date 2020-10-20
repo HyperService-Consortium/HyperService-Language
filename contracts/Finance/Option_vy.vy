@@ -2,7 +2,6 @@ struct ValidBuyer:
     valid: bool
     executed: bool
 
-# constant cannot use wei_value?
 INIT_STAKE: constant(uint256) = 10
 MIN_STAKE: constant(uint256) = 1
 DUMMYADDRESS: constant(address) = 0x0000000000000000000000000000000000000000
@@ -13,6 +12,21 @@ strikePrice: public(wei_value)
 owner: address
 
 optionBuyers: public(map(address,ValidBuyer))
+
+
+@public
+@payable
+def CashSettle(genuinePrice: wei_value):
+    assert self.remainingFund > MIN_STAKE
+    assert self.optionBuyers[msg.sender].valid
+    assert not self.optionBuyers[msg.sender].executed
+
+    if genuinePrice > self.strikePrice:
+        profit: wei_value = self.safeSub(genuinePrice, self.strikePrice)
+        send(msg.sender,profit)
+        self.optionBuyers[msg.sender].executed = True
+
+
 
 @public
 @payable
@@ -58,6 +72,8 @@ def updateStake(_value: wei_value):
     assert msg.sender == self.owner
     self.strikePrice = _value
 
+
+
 @public
 @payable
 def stakeFund():
@@ -81,14 +97,5 @@ def buyOption(_proposal: wei_value):
         executed: False
         })
 
-@public
-@payable
-def CashSettle(genuinePrice: wei_value):
-    assert self.remainingFund > MIN_STAKE
-    assert self.optionBuyers[msg.sender].valid
-    assert not self.optionBuyers[msg.sender].executed
 
-    if genuinePrice > self.strikePrice:
-        profit: wei_value = self.safeSub(genuinePrice, self.strikePrice)
-        send(msg.sender,profit)
-        self.optionBuyers[msg.sender].executed = True
+

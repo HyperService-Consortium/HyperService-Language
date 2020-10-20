@@ -2,31 +2,71 @@
 demon example for hsl
 */
 
+import ("contracts/Finance/Broker.sol")
+import ("contracts/Finance/Option_vy.vy")
+import ("contracts/Finance/option.go")
+
+account[] a1 = new account[2]
+a1[0] = EthereumX::"0x7019fa779024c0a0eac1d8475733eefe10a49f3b" // account addr
+a1[1] = EthereumX::"0x47a1cdb6594d6efed3a6b917f2fbaa2bbcf61a2g"
+account a2 = EthereumY::"0x323b5d4c32345ced77393b3530b1eed0f346429d"
+account a3 = Tendermint::"0xe41d2489571d322189246dafa5ebde1f4699f498"
+
+contract c1 = EthereumY::Broker("0xafc7d2959e72081770304f6474151293be1fbba7")  // contract addr
+contract c2 = EthereumX::Option_vy("0x3723261b2a5a62b778b5c74318534d7fdf8db38c")  // contract addr
+contract c3 = Tendermint::Option("0x8e215d06ea7ec1fdb4fc5fd21768f4b34ee92ef4")
+
+
+for(account a : a1){
+    op op1 payment 10 "ether" from a to a2 with 1 "ether" as 2 "XYZ"
+}
+op op2 call c1.getGenuineValue() using a2
+op op3 payment 20 "ether" from a1[1] to a1[0] with 1 "ether" as 1 "XYZ"
+
+op op4 if(c1.genuineValue > 50){
+   op op5 call c2.CashSettle(c1.genuineValue) using a1[0]
+   op op6 payment 10 "ether" from a1[0] to a3 with 1 "ether" as 1 "XYZ"
+   op op7 call c3.CashSettle(c2.strikePrice) using a3
+}
+else{
+    op op8 payment 20 "ether" from a1[0] to a1[1] with 1 "ether" as 1 "XYZ"
+}
+
+dep:
+op2 before op3
+
 import ("contracts/DelegateAdmin/federal.sol")
 import ("contracts/DelegateAdmin/delegate.vy")
 import ("contracts/DelegateAdmin/delegate.go")
 
-account[] a1 = new account[2]
-account a1[0] = chain1::"0x7019fa779024c0a0eac1d8475733eefe10a49f3b" // account addr
-account a1[1] = chain2::"0x47a1cdb6594d6efed3a6b917f2fbaa2bbcf61a2e"
-account a2 = chain2::"0x47a1cdb6559d6efed3a6b917f2fbaa2bbcf61a2e"
-account a3 = chain3::"0x47a1cdb6559d6efed3a6b917f2fbaa2bbcf61a2f"
 
-contract c1 = Chain1::Federal("0xafc7d2959e72081770304f6474151293be1fbba7")  // contract addr
-contract c2 = Chain2::delegate("0x3723261b2a5a62b778b5c74318534d7fdf8db38c")  // contract addr
-contract c3 = Chain3::Delegate("0x3723261b2a5a62b778b5c74318d34d7fdhhldb38c")
 
-for(account a : a1){
-    op op1 payment 50 "ether" from a2 to a with 1 "ether" as 1 "XYZ"
-    op op2 call c2.vote() using a
-}
+account a1 = EthereumX::"0x7019fa779024c0a0eac1d8475733eefe10a49f3b"
+account a2 = EthereumY::"0x8e215d06ea7ec1fdb4fc5fd21768f4b34ee92ef4"
 
-op op3 payment 25 "ether" from a1[0] to a2 with 1 "ether" as 1 "XYZ"
-op op4 call c2.vote() using a3
+contract c1 = Chain1::Federal("0xafc7d2959e72081770304f6474151293be1fbba7")
+contract c2 = Chain2::delegate("0x3723261b2a5a62b778b5c74318534d7fdf8db38c")
 
-loop(2){
-op op5 payment 15 "ether" from a1[1] to a3 with 1 "ether" as 1 "XYZ"
+op op1 call c2.vote() using a2
+op op2 call c1.submitVotes(10, c2.totalVotes) using a1
+op op3 call c3.Vote() using a3
+dep:
+o1 before o2
+
+
+/*
+
+account a1 = EthereumX::"0x7019fa779024c0a0eac1d8475733eefe10a49f3b"
+account a2 = EthereumY::"0x8e215d06ea7ec1fdb4fc5fd21768f4b34ee92ef4"
+contract c1 = EthereumY::Access("0xafc7d2959e72081770304f6474151293be1fbba7")
+contract c2 = EthereumX::Infro("0x7018fa779024c0a0eac1d8475733eefe10a49f3z")
+
+op op1 call c1.getSSN(c2.ssn) using a1
+op op2 if(c2.fund == 0){
+    op op3 call c1.setFund(100) using a2
 }
 
 dep:
-op3 before op4
+op1 before op2
+
+*/

@@ -3,7 +3,6 @@ pragma solidity ^0.5.1;
 contract Option {
     uint constant public INIT_STAKE = 10 wei;
     uint constant public MIN_STAKE = 1 wei;
-    // TODO: remove value after your deploying your contract.
     
     uint public remainingFund = 100;
     uint public strikePrice;

@@ -340,6 +340,67 @@ public class OpIntentVisitor extends HSlangBaseVisitor<String> {
         return super.visitPaymentSpec(ctx);
     }
 
+    private String paymentSpec(String opName, String tmp, Sources src, Sources dst, HSlangParser.IfpaymentSpecContext ctx, String arrayName) throws HSLParsingException{
+        String srctmp, dstmp;
+
+        srctmp = ctx.from.fromacct.getText();
+        dstmp = ctx.toacc.fromacct.getText();
+
+
+        if(tmp != null){
+            if(srctmp.equals(tmp)){
+                srctmp = arrayName;
+            }
+            else{
+                dstmp = arrayName;
+            }
+        }
+
+        src.user_name = srctmp;
+        dst.user_name = dstmp;
+        int[] srcArray = accMax.get(srctmp);
+        int[] dstArray = accMax.get(dstmp);
+
+        srcArray[0] -= Integer.valueOf(ctx.amt.getText());
+        dstArray[0] += Integer.valueOf(ctx.amt.getText());
+        srcArray[1] = Math.max(srcArray[1], srcArray[0]);
+        dstArray[1] = Math.max(dstArray[1], dstArray[0]);
+        //accMax.put(srctmp, accMax.get)
+        // source account is not exist
+        if(defiVar.get(src.user_name) == null){
+            throw new HSLParsingException("src " + srctmp + " is not defined");
+        }
+        // receiver account is not exist
+        if(defiVar.get(dstmp)== null){
+            throw new HSLParsingException("dst " + dstmp + " is not defined");
+        }
+        src.domain = defiVar.get(srctmp);
+        dst.domain = defiVar.get(dstmp);
+        StringBuilder amount = new StringBuilder();
+        if(ctx.amt != null) {
+            amount.append(ctx.amt.getText());
+        }
+        else{
+            amount.append(ctx.stateField().getText());
+        }
+        String unit = ctx.unit.getText().replace("\"","");
+        StringBuffer rati = new StringBuffer();
+        if(ctx.newuint != null) {
+            String newuint = ctx.newuint.getText().replace("\"", "");
+            rati.append(ctx.amtuint.getText() + " ");
+            rati.append(unit + " as " + ctx.newamt.getText()+ " "+ newuint);
+        }
+        Payment opPay = new Payment(opName,src,dst, amount.toString(), unit, rati.toString());
+        StringBuilder sb = new StringBuilder();
+        sb.append(opPay.toJson());
+        sb.append(",\n");
+
+        setNum.put(opName,numOp++);
+        inDegree = new int[numOp];
+        opCheck(opName);
+        return sb.toString();
+    }
+
     private void paymentSpec(String opName, String tmp, Sources src, Sources dst, HSlangParser.PaymentSpecContext ctx, int index, String arrayName) throws HSLParsingException{
         String srctmp, dstmp;
         if(ctx.from.numericallit() != null){
@@ -360,10 +421,20 @@ public class OpIntentVisitor extends HSlangBaseVisitor<String> {
 
         if(tmp != null){
             if(srctmp.equals(tmp)){
-                srctmp = arrayName + "[" + index + "]";
+                if(index == -1){
+                    srctmp = arrayName;
+                }
+                else {
+                    srctmp = arrayName + "[" + index + "]";
+                }
             }
             else{
-                dstmp = arrayName + "[" + index + "]";
+                if(index == -1){
+                    dstmp = arrayName;
+                }
+                else {
+                    dstmp = arrayName + "[" + index + "]";
+                }
             }
         }
 
@@ -422,8 +493,16 @@ public class OpIntentVisitor extends HSlangBaseVisitor<String> {
                         visitedIf.add(ctx.ifStatemnt().ifSpec().get(i).opname.getText());
                     }
                 }
-               StringBuilder res = visitif(ctx);
+
+                int forSize = ctx.ifStatemnt().forLoop().size();
+                if(forSize != 0){
+                    for(int i = 0; i < forSize; i++){
+                        visitedIf.add(ctx.ifStatemnt().forLoop().get(i).opName.getText());
+                    }
+                }
+                StringBuilder res = visitif(ctx);
                 output.append(res.toString());
+                int a = 1;
             }
         }catch (Exception e){
             System.err.println("IfSpec exception: " + e);
@@ -458,12 +537,36 @@ public class OpIntentVisitor extends HSlangBaseVisitor<String> {
                     res.append(tmp);
                 }
             }
+            size = ctx.ifStatemnt().forLoop().size();
+            if(size != 0){
+                for(int i = 0; i < size; i++){
+                    HSlangParser.ForLoopContext context = ctx.ifStatemnt().forLoop().get(i);
+
+                    String var = context.name.getText();
+                    List<String> collections = new ArrayList<>();
+                        for (int j = 0; j < context.collection().size(); j++) {
+                            String tmpStr = context.collection().get(i).id.getText();
+                            collections.add(tmpStr);
+                        }
+                        forloopSpec(context,collections,res,var).toString();
+                    visited.add(context.opName.getText());
+                }
+                res.setLength(res.length()-2);
+
+            }
+
             List<BlockVarSpecContext> varList = ifstate.blockVarSpec();
             blockVarSt(varList,ifVar,ifVarAddr);
+
             List<BlockOpSpecContext> ifOpers = ifstate.blockOpSpec();
             Map<String, int[]> tmpMax = new HashMap<>();
+            if(ifstate.forLoop().size() != 0){
+                res.append(",\n");
+            }
             blockOper(ifOpers, ifVar, ifVarAddr, res, tmpMax, 1);
-            res.setLength(res.length()-2);
+            if(ifstate.blockOpSpec().size() != 0) {
+                res.setLength(res.length() - 2);
+            }
             res.append("],\n");
             if(ctx.elseStatement().size() != 0){
                 res.append("  \"else\" : [\n");
@@ -501,7 +604,7 @@ public class OpIntentVisitor extends HSlangBaseVisitor<String> {
                 }
             }
 
-            res.append("\"condition\":");
+            res.append("\"condition\":[");
             Value leftV = new Value();
             Value rightV = new Value();
             String leftType = Typecheck(cond1.getText(),leftV);
@@ -511,8 +614,72 @@ public class OpIntentVisitor extends HSlangBaseVisitor<String> {
             IfCondition ifcd = new IfCondition(left, right,operation);
             //Condition cd = new Condition(cond1.getText(),cond2.getText(),operation);
             res.append(ifcd.toJson().toString());
-            res.append("\n},");
+            res.append("]},");
         return res;
+    }
+
+    @Override
+    public String visitForLoop(HSlangParser.ForLoopContext ctx) {
+        String operName = ctx.opName.getText();
+        if(visited.add(operName)) {
+
+            String var = ctx.name.getText();
+            List<String> collections = new ArrayList<>();
+            try {
+                int size = ctx.collection().size();
+                for (int i = 0; i < size; i++) {
+                    String tmpStr = ctx.collection().get(i).id.getText();
+                    if (!defiVar.containsKey(tmpStr)) {
+                        throw new HSLParsingException("for loop variable: " + tmpStr + " is not defined");
+                    }
+                    collections.add(tmpStr);
+                }
+                StringBuilder sb = new StringBuilder();
+                output.append(forloopSpec(ctx,collections,sb,var).toString());
+
+            } catch (Exception e) {
+                System.err.println("forLoop exception: " + e);
+                e.printStackTrace();
+                return super.visitForLoop(ctx);
+            }
+        }
+        return super.visitForLoop(ctx);
+    }
+
+    private StringBuilder forloopSpec(HSlangParser.ForLoopContext ctx, List<String> collections, StringBuilder sb, String var) throws HSLParsingException {
+        List<HSlangParser.BlockOpSpecContext> list = ctx.blockOpSpec();
+        for (int i = 0; i < collections.size(); i++) {
+            for (int j = 0; j < list.size(); j++) {
+                if (list.get(j).ifpaymentSpec() != null) {
+                    HSlangParser.IfpaymentSpecContext context = list.get(j).ifpaymentSpec();
+                    visited.add(context.opname.getText());
+                    Sources src = new Sources();
+                    Sources dst = new Sources();
+                    int op = i + 1;
+                    visited.add(context.opname.getText());
+                    String opName = context.opname.getText() + "." + op;
+                    String pay = paymentSpec(opName, var,src, dst,context, collections.get(i));
+                    sb.append(pay);
+
+                }
+                else if (list.get(j).ifcontractInvocationSpec() != null) {
+                    HSlangParser.IfcontractInvocationSpecContext context = list.get(j).ifcontractInvocationSpec();
+
+
+                    String invoker = context.account().get(0).fromacct.getText();  // account id
+                    if (invoker.equals(var)) {
+                        invoker = collections.get(i);
+                    }
+                    visited.add(context.opname.getText());
+                    int op = i + 1;
+                    String opName = context.opname.getText() + "." + op;
+                    String contractName = context.recv.getText();
+                    String cont = contractCall(context, opName, contractName, invoker);
+                    sb.append(cont);
+                }
+            }
+        }
+        return sb;
     }
 
     @Override
@@ -552,9 +719,11 @@ public class OpIntentVisitor extends HSlangBaseVisitor<String> {
         Map<String, String> ifVarAddr = new HashMap<>();
         List<BlockVarSpecContext> varList = ctx.blockVarSpec();
         blockVarSt(varList,ifVar,ifVarAddr);
-        List<BlockOpSpecContext> lists = ctx.blockOpSpec();
-        blockOper(lists, ifVar, ifVarAddr, res, null, Integer.valueOf(loopTime));
-        res.setLength(res.length()-2);
+        if(ctx.blockOpSpec()!= null) {
+            List<BlockOpSpecContext> lists = ctx.blockOpSpec();
+            blockOper(lists, ifVar, ifVarAddr, res, null, Integer.valueOf(loopTime));
+            res.setLength(res.length() - 2);
+        }
         res.append("],\n");
         res.append(" \"loopTime\" : " +  "\"" + loopTime + "\" ");
         res.append("\n},\n");
@@ -847,6 +1016,89 @@ public class OpIntentVisitor extends HSlangBaseVisitor<String> {
         return super.visitContractInvocationSpec(ctx);
     }
 
+    private String contractCall(HSlangParser.IfcontractInvocationSpecContext ctx, String opName, String contractName, String invoker) throws HSLParsingException{
+        StringBuilder sb = new StringBuilder();
+        // account is not exist
+        if (defiVrAddr.get(invoker) == null) {
+            throw new HSLParsingException(invoker + " is not exist");
+        }
+        Contract tmp = contracts.get(contractName);
+
+        // contract is not exist
+        if (tmp == null) {
+            throw new HSLParsingException("the contract " + contractName + " is not defined");
+        }
+
+        List<Function> funcs = tmp.getFunctions();
+        boolean flag = true;
+        String funcName = ctx.method.getText();
+        Function res = new Function();
+        for (Function f : funcs) {
+            // find whether the function is defined in the contract
+            // if the function exist, set the flag as false
+            if (f.name.equals(funcName)) {
+                flag = false;
+                res = f;
+                break;
+            }
+        }
+
+        if (flag) {
+            throw new HSLParsingException("the function " + funcName
+                    + " is not defined in the " + contractName + " contract");
+        }
+        int[] invokArr = accMax.get(invoker);
+        invokArr[0] -=1;
+        String name = opName;
+        String contract_code = contractName;
+
+        Sources contract = new Sources();
+        contract.domain = defiVar.get(contract_code);
+        contract.address = defiVrAddr.get(contract_code).replace("\"", "");
+        List<Inputs> in = new ArrayList<>();
+        if (res.args.isEmpty()) {
+            // function has none inputs
+            if (ctx.args != null) {
+                throw new HSLParsingException("Invaid inputs");
+            }
+            opCheck(opName);
+            ContractInvocation conIn = new ContractInvocation(opName, invoker, contract, funcName, in);
+            sb.append(conIn.toJson());
+            sb.append(",\n");
+            setNum.put(opName, numOp++);
+            inDegree = new int[numOp];
+        } else {
+            //function has multi inputs
+            List<Parameter> parameters = res.args;
+            String[] args = ctx.args.getText().split(",");
+            if (parameters.size() != args.length) {
+                throw new HSLParsingException("Invaid inputs");
+            }
+            //check the input is matching the function's requirment
+            for (int i = 0; i < args.length; i++) {
+                String tmpArg = args[i];
+                String requireType = parameters.get(i).type.name;
+                Value value = new Value();
+                String typeRes = Typecheck(tmpArg, value);
+                if (typeRes == null) {
+                    throw new HSLParsingException("Operation " + name + " have wrong function inputs");
+                }
+                if (!requireType.equals(typeRes)) {
+                    throw new HSLParsingException("find: " + tmpArg + ", Wrong Input Type, needs: " + requireType);
+                }
+                Inputs arg = new Inputs(typeRes, value);
+                in.add(arg);
+            }
+            opCheck(opName);
+            ContractInvocation conIn = new ContractInvocation(name, invoker, contract, funcName, in);
+            sb.append(conIn.toJson());
+            sb.append(",\n");
+            setNum.put(opName, numOp++);
+            inDegree = new int[numOp];
+
+        }
+        return sb.toString();
+    }
 
     private void contractCall(HSlangParser.ContractInvocationSpecContext ctx, String opName, String contractName, String invoker) throws HSLParsingException{
         // account is not exist
@@ -905,7 +1157,6 @@ public class OpIntentVisitor extends HSlangBaseVisitor<String> {
             if (parameters.size() != args.length) {
                 throw new HSLParsingException("Invaid inputs");
             }
-
             //check the input is matching the function's requirment
             for (int i = 0; i < args.length; i++) {
                 String tmpArg = args[i];
@@ -968,8 +1219,8 @@ public class OpIntentVisitor extends HSlangBaseVisitor<String> {
             value.constant = input;
             return "boolean";
         }
-
-        return null;
+        value.constant = input.replace("\"","");
+        return "string";
     }
 
     /**

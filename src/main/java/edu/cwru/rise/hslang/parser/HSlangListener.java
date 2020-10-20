@@ -110,6 +110,26 @@ public interface HSlangListener extends ParseTreeListener {
 	 */
 	void exitOpSpec(HSlangParser.OpSpecContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link HSlangParser#forLoop}.
+	 * @param ctx the parse tree
+	 */
+	void enterForLoop(HSlangParser.ForLoopContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link HSlangParser#forLoop}.
+	 * @param ctx the parse tree
+	 */
+	void exitForLoop(HSlangParser.ForLoopContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link HSlangParser#collection}.
+	 * @param ctx the parse tree
+	 */
+	void enterCollection(HSlangParser.CollectionContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link HSlangParser#collection}.
+	 * @param ctx the parse tree
+	 */
+	void exitCollection(HSlangParser.CollectionContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link HSlangParser#foreachSpec}.
 	 * @param ctx the parse tree
 	 */

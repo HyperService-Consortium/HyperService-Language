@@ -73,6 +73,18 @@ public interface HSlangVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitOpSpec(HSlangParser.OpSpecContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link HSlangParser#forLoop}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitForLoop(HSlangParser.ForLoopContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link HSlangParser#collection}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitCollection(HSlangParser.CollectionContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link HSlangParser#foreachSpec}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

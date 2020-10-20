@@ -6,15 +6,15 @@ import ("contracts/DelegateAdmin/federal.sol")
 import ("contracts/DelegateAdmin/delegate.vy")
 import ("contracts/DelegateAdmin/delegate.go")
 
-account a1 = chain1::"0x7019fa779024c0a0eac1d8475733eefe10a49f3b" // account addr
+account a1 = chain1::"0x7019fa779024c0a0eac1d8475733eefe10a49f3b"
 account a2 = chain2::"0x47a1cdb6594d6efed3a6b917f2fbaa2bbcf61a2e"
 account a3 = chain3::"0x47a1cdb6559d6efed3a6b917f2fbaa2bbcf61a2e"
-contract c1 = Chain1::Federal("0xafc7d2959e72081770304f6474151293be1fbba7")  // contract addr
-contract c2 = Chain2::delegate("0x3723261b2a5a62b778b5c74318534d7fdf8db38c")  // contract addr
+contract c1 = Chain1::Federal("0xafc7d2959e72081770304f6474151293be1fbba7")
+contract c2 = Chain2::delegate("0x3723261b2a5a62b778b5c74318534d7fdf8db38c")
 contract c3 = Chain3::Delegate("0x3723261b2a5a62b778b5c74318d34d7fdhhldb38c")
 
 op op1 call c2.vote() using a2
-op op2 call c1.submitVotes(c2.district, c2.totalVotes) using a1
+op op2 call c1.submitVotes(10, c2.totalVotes) using a1
 op op3 call c3.Vote() using a3
 op op4 call c1.submitVotes(c2.district, c2.totalVotes) using a1
 

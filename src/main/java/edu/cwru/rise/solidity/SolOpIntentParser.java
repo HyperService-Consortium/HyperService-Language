@@ -22,7 +22,8 @@ public class SolOpIntentParser {
     public static void main(String[] args) {
         try {
             // Create a scanner that reads from the input stream passed to us
-            String file = "contracts/CrypotAsset/asset.sol";
+            //String file = "contracts/CrypotAsset/asset.sol";
+            String file = "contracts/DelegateAdmin/federal.sol";
             CharStream charStream = new ANTLRInputStream(new String(Files.readAllBytes(Paths.get(file))));
             Lexer lexer = new SolidityLexer(charStream);
 

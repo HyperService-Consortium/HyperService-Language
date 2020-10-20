@@ -24,7 +24,7 @@ public class VPOpIntentParser {
     public static void main(String[] args) {
         try {
             // Create a scanner that reads from the input stream passed to us
-            String file = "Option_vy.vy";
+            String file = "contracts/DelegateAdmin/delegate.vy";
             String[] names = file.split("/|\\.");
             int size = names.length-2;
             CharStream charStream = new ANTLRInputStream(new String(Files.readAllBytes(Paths.get(file))));

@@ -7,16 +7,75 @@ import ("contracts/Finance/option.go")
 
 account a1 = EthereumX::"0x7019fa779024c0a0eac1d8475733eefe10a49f3b" // account addr
 account a2 = EthereumY::"0x47a1cdb6594d6efed3a6b917f2fbaa2bbcf61a2e"
-account a3 = Tendermint::"0x47a1cdb6559d6efed3a6b917f2fbaa2bbcf61a2e"
+account[] a3 = new account[2]
+a3[0] = Tendermint::"0x47a1cdb6559d6efed3a6b917f2fbaa2bbcf61d3e"
+a3[1] = Tendermint::"0x47a1cdb6559d6efed3a6b917f2fbaa2becf61a2g"
 contract c1 = EthereumX::Broker("0xafc7d2959e72081770304f6474151293be1fbba7")  // contract addr
 contract c2 = EthereumY::Option_vy("0x3723261b2a5a62b778b5c74318534d7fdf8db38c")  // contract addr
 contract c3 = Tendermint::Option("0x3723261b2a5a62b778b5c74318d34d7fdhhldb38c")
 
+
+/*
 op o1 call c1.getGenuineValue() using a1 // no parameters
+op T1 if (c1.genuineValue > 10){
+    op o2 payment 10 "ether" from a1 to a2 with 1 "ether" as 2 "XYZ"
+    op o3 call c2.CashSettle(c1.genuineValue) using a2
+}
 op o2 call c2.CashSettle(c1.genuineValue) using a2 // use the value of state variable genuineValue of c1 as the parameter
 op o3 payment 10 "ether" from a1 to a3 with 1 "ether" as 2 "XYZ"
 op o4 call c3.CashSettle(c2.strikePrice) using a3
+*/
+
+op o1 call c1.getGenuineValue() using a1 // no parameters
+op o6 call c1.getGenuineValue() using a1 // no parameters
+op T1 if(c1.genuineValue > 10){
+    op o2 payment 10 "ether" from a1 to a2 with 1 "ether" as 2 "XYZ"
+    op o3 call c2.CashSettle(c1.genuineValue) using a2
+}
+else{
+    op o4 call c3.CashSettle(c2.strikePrice) using a3[1]
+}
+
+for(account a : a3){
+    op o5 call c3.CashSettle(c2.strikePrice) using a
+}
 
 dep:
-o1 before o2,o3
-o3 before o4
+o1 before o6
+
+
+account a1 = ChainX::Account(0x7019fa779024c0a0eac1d8475733eefe10a49f3b)
+account a2 = ChainY::Account(0x47a1cdb6594d6efed3a6b917f2fbaa2bbcf61a2e)
+account a3 = ChainZ::Account(0x61a26559d6efed3a6b917f2fbaa2bbcf61d3ea32)
+account a4 = ChainZ::Account(0x853e778b5c74318d34d7fdhhldb38cdef183o823)
+contract c1 = ChainX::Broker(0xbba759e72081770304f6474151293be1fbba7f24)
+contract c2 = ChainY::Option(0x917f261b2a5a62b778b5c74318534d7fdf8db38c)
+contract c3 = ChainZ::Option(0xefed261b2a5a62b778b5c74318d34d7fdhhldb38)
+
+op op1 invocation c1.GetStrikePrice() using a1
+if(c1.StrikePrice > 10):
+    op op2 payment 50 xcoin from a1 to a2 with 1 xcoin as 0.5 ycoin
+    op op3 invocation c2.CashSettle(10, c1.StrikePrice) using a2
+    for acc in [a3, a4] :
+    op op4 invocation c3.CashSettle(5, c1.StrikePrice) using acc
+else:
+op op5 invocation c3.CashSettle(3, c1.StrikePrice) using a4
+
+dep:
+op1 before op2, op4, op5; op3 after op2
+
+
+import ("Update.sol")
+import ("Infor.sol")
+
+account a1 = EthereumX::Account(0x323b5d4c32345ced77393b3530b1eed0f346429d)
+account a2 = EthereumY::Account(0x7019fa779024c0a0eac1d8475733eefe10a49f3b)
+
+contract c1 = EthereumX::Infor(0xafc7d2959e72081770304f6474151293be1fbba7)
+contract c2 = EthereumY::Update(0xefed261b2a5a62b778b5c74318d34d7fdhhldb38)
+
+op op1 call c2.getSSN(c1.SSN) using a2
+op op2 call c1.update(c2.verified, 100) using a1
+
+dep:
+op1 before op2

@@ -4,7 +4,6 @@ contract Broker {
     uint constant public MAX_OWNER_COUNT = 50;
     uint constant public MAX_VALUE_PROPOSAL_COUNT = 5;
 
-    // The authorative ouput provided by this Broker contracts.
     uint public genuineValue;
 
     // The Broker contract is owned by multple entities to ensure security.
